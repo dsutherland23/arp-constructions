@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { QRCodeSVG } from "qrcode.react";
 import { 
   ArrowUpRight, 
   ChevronRight, 
@@ -426,10 +427,32 @@ export default function HomePage() {
                                 Download
                               </a>
                             </Button>
-                            <div className="bg-white p-2 rounded-2xl shadow-inner flex items-center justify-center aspect-square h-14 w-full">
-                              <QrCode className="h-8 w-8 text-primary" />
-                              <span className="text-[10px] font-bold ml-1 uppercase">Scan QR</span>
-                            </div>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <button className="bg-white p-2 rounded-2xl shadow-inner flex items-center justify-center aspect-square h-14 w-full cursor-pointer hover:bg-secondary transition-colors">
+                                  <QrCode className="h-8 w-8 text-primary" />
+                                  <span className="text-[10px] font-bold ml-1 uppercase">Scan QR</span>
+                                </button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-md rounded-3xl overflow-hidden border-none glass-card p-8">
+                                <DialogHeader className="mb-6">
+                                  <DialogTitle className="text-xl font-bold text-center">Scan to Save Contact</DialogTitle>
+                                </DialogHeader>
+                                <div className="flex flex-col items-center gap-6">
+                                  <div className="p-4 bg-white rounded-3xl shadow-xl">
+                                    <QRCodeSVG 
+                                      value={`BEGIN:VCARD\nVERSION:3.0\nFN:Adrian Pecco\nORG:ARP Construction\nTEL:7047129947\nEMAIL:adrian.pecco@gmail.com\nURL:https://arp.construction\nEND:VCARD`}
+                                      size={200}
+                                      level="H"
+                                      includeMargin={true}
+                                    />
+                                  </div>
+                                  <p className="text-sm text-center text-muted-foreground">
+                                    Open your phone camera to scan this code and instantly save ARP Construction to your contacts.
+                                  </p>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                           <div className="p-4 rounded-2xl bg-secondary/50 border border-border/50">
                             <p className="text-sm text-center text-muted-foreground">
