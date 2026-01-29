@@ -116,11 +116,11 @@ export default function HomePage() {
   return (
     <div className="noise-bg min-h-screen">
       {/* Navigation */}
-      <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-4" : "py-8"}`}>
-        <div className="container mx-auto px-6">
-          <div className={`flex items-center justify-between rounded-full px-6 py-3 transition-all ${isScrolled ? "glass-card shadow-lg" : "bg-transparent"}`}>
-            <div className="flex items-center gap-2">
-              <img src={logoImg} alt="Arp" className="h-24 md:h-28 w-auto" />
+      <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"}`}>
+        <div className="container mx-auto px-4 md:px-6">
+          <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"}`}>
+            <div className="flex items-center">
+              <img src={logoImg} alt="Arp" className="h-12 md:h-28 w-auto transition-all duration-500" />
             </div>
             
             <div className="hidden items-center gap-8 md:flex">
