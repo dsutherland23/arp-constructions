@@ -120,7 +120,7 @@ export default function HomePage() {
         <div className="container mx-auto px-6">
           <div className={`flex items-center justify-between rounded-full px-6 py-3 transition-all ${isScrolled ? "glass-card shadow-lg" : "bg-transparent"}`}>
             <div className="flex items-center gap-2">
-              <img src={logoImg} alt="Arp" className="h-10 w-auto" />
+              <img src={logoImg} alt="Arp" className="h-16 w-auto brightness-0 invert" />
             </div>
             
             <div className="hidden items-center gap-8 md:flex">
@@ -259,6 +259,33 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Process Section */}
+      <section id="process" className="py-32 bg-secondary/30">
+        <div className="container mx-auto px-6">
+          <div className="mb-20 text-center">
+            <Badge variant="outline" className="mb-4 rounded-full border-accent/20 bg-accent/5 px-4 py-1 text-accent">
+              Our Method
+            </Badge>
+            <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl">How We Work</h2>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-4">
+            {[
+              { step: "01", title: "Strategy", desc: "Initial consult to define your vision and budget." },
+              { step: "02", title: "Design", desc: "Detailed 3D mockups and material selection." },
+              { step: "03", title: "Build", desc: "Precision construction with daily progress updates." },
+              { step: "04", title: "Handoff", desc: "Final walkthrough and 2026 quality certification." }
+            ].map((item, i) => (
+              <div key={i} className="relative p-8 rounded-3xl bg-card shadow-sm hover-lift">
+                <span className="text-5xl font-black text-accent/10 absolute top-4 right-8">{item.step}</span>
+                <h3 className="text-xl font-bold mb-3 relative z-10">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Modern Contact Strategy */}
       <section id="contact" className="py-32">
         <div className="container mx-auto px-6">
@@ -321,7 +348,7 @@ export default function HomePage() {
         <div className="container mx-auto px-6">
           <div className="flex flex-col items-center justify-between gap-10 md:flex-row">
             <div className="flex flex-col items-center md:items-start">
-              <img src={logoImg} alt="Arp" className="h-10 w-auto mb-4" />
+              <img src={logoImg} alt="Arp" className="h-14 w-auto mb-4 brightness-0 invert" />
               <p className="text-muted-foreground max-w-xs text-center md:text-left">
                 Setting the standard for architectural precision and modern living in 2026.
               </p>
