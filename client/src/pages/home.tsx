@@ -84,6 +84,7 @@ export default function HomePage() {
   const { toast } = useToast();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -113,6 +114,8 @@ export default function HomePage() {
     });
   };
 
+  const navItems = ["Services", "Projects", "Process", "Contact"];
+
   return (
     <div className="noise-bg min-h-screen">
       {/* Navigation */}
@@ -123,8 +126,9 @@ export default function HomePage() {
               <img src={logoImg} alt="Arp" className="h-12 md:h-28 w-auto transition-all duration-500" />
             </div>
             
+            {/* Desktop Nav */}
             <div className="hidden items-center gap-8 md:flex">
-              {["Services", "Projects", "Process", "Contact"].map((item) => (
+              {navItems.map((item) => (
                 <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-medium tracking-tight text-primary/80 transition-colors hover:text-accent">
                   {item}
                 </a>
@@ -134,15 +138,44 @@ export default function HomePage() {
               </Button>
             </div>
             
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-6 w-6" />
+            {/* Mobile Nav Toggle */}
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-full left-0 w-full glass-card mt-2 p-6 md:hidden shadow-2xl rounded-3xl"
+            >
+              <div className="flex flex-col gap-4">
+                {navItems.map((item) => (
+                  <a 
+                    key={item} 
+                    href={`#${item.toLowerCase()}`} 
+                    className="text-lg font-medium p-2 border-b border-border/50"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item}
+                  </a>
+                ))}
+                <Button className="rounded-full bg-primary w-full mt-2" onClick={() => setIsMobileMenuOpen(false)}>
+                  Book a Consult
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-screen overflow-hidden">
+      <section className="relative h-[90vh] md:h-screen overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSlide}
@@ -161,30 +194,30 @@ export default function HomePage() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="container relative z-20 mx-auto flex h-full flex-col justify-center px-6">
+        <div className="container relative z-20 mx-auto flex h-full flex-col justify-center px-4 md:px-6 pt-20 md:pt-0">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="max-w-3xl"
           >
-            <Badge variant="outline" className="mb-6 rounded-full border-accent/20 bg-accent/5 px-4 py-1 text-accent">
+            <Badge variant="outline" className="mb-4 md:mb-6 rounded-full border-accent/20 bg-accent/5 px-4 py-1 text-accent">
               <Sparkles className="mr-2 h-3 w-3" />
               Crafting Excellence in 2026
             </Badge>
-            <h1 className="mb-6 text-6xl font-bold leading-[1.1] tracking-tighter text-primary sm:text-8xl">
+            <h1 className="mb-4 md:mb-6 text-4xl font-bold leading-[1.1] tracking-tighter text-primary sm:text-8xl">
               Building with <span className="text-gradient">Precision.</span>
               <br />Living with Style.
             </h1>
-            <p className="mb-10 max-w-xl text-lg text-muted-foreground sm:text-xl">
+            <p className="mb-8 md:mb-10 max-w-xl text-base md:text-xl text-muted-foreground">
               Arp Construction merges architectural integrity with modern design aesthetics to deliver spaces that inspire.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="group rounded-full bg-primary px-8 hover:bg-accent">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" className="group rounded-full bg-primary px-8 hover:bg-accent w-full sm:w-auto">
                 Start Project
                 <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8">
+              <Button size="lg" variant="outline" className="rounded-full px-8 w-full sm:w-auto">
                 Explore Portfolio
               </Button>
             </div>
@@ -193,14 +226,14 @@ export default function HomePage() {
       </section>
 
       {/* Bento Grid Services */}
-      <section id="services" className="py-32">
-        <div className="container mx-auto px-6">
-          <div className="mb-20">
-            <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl">Our Capabilities</h2>
+      <section id="services" className="py-20 md:py-32">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="mb-12 md:mb-20">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">Our Capabilities</h2>
             <div className="mt-4 h-1 w-24 bg-accent" />
           </div>
           
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service, i) => (
               <motion.div
                 key={i}
@@ -208,14 +241,14 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="group relative overflow-hidden rounded-[2rem] bg-card p-10 transition-all hover:bg-secondary/50"
+                className="group relative overflow-hidden rounded-[2rem] bg-card p-8 md:p-10 transition-all hover:bg-secondary/50"
               >
-                <div className={`mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl ${service.color}`}>
-                  <service.icon className="h-8 w-8" />
+                <div className={`mb-6 md:mb-8 inline-flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl ${service.color}`}>
+                  <service.icon className="h-6 w-6 md:h-8 md:w-8" />
                 </div>
-                <h3 className="mb-4 text-2xl font-bold">{service.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{service.description}</p>
-                <div className="absolute bottom-8 right-8 opacity-0 transition-opacity group-hover:opacity-100">
+                <h3 className="mb-3 md:mb-4 text-xl md:text-2xl font-bold">{service.title}</h3>
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{service.description}</p>
+                <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 opacity-0 transition-opacity group-hover:opacity-100">
                   <ChevronRight className="h-6 w-6 text-accent" />
                 </div>
               </motion.div>
@@ -225,11 +258,11 @@ export default function HomePage() {
       </section>
 
       {/* Marquee/Scrolling Projects */}
-      <section id="projects" className="bg-primary py-32 text-primary-foreground">
-        <div className="container mx-auto mb-20 px-6">
-          <div className="flex items-end justify-between">
-            <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl">Visual Proof</h2>
-            <Button variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10">
+      <section id="projects" className="bg-primary py-20 md:py-32 text-primary-foreground">
+        <div className="container mx-auto mb-12 md:mb-20 px-4 md:px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">Visual Proof</h2>
+            <Button variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10 w-fit">
               View All Case Studies
             </Button>
           </div>
@@ -239,19 +272,19 @@ export default function HomePage() {
           <motion.div 
             animate={{ x: ["0%", "-50%"] }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="flex gap-8 px-4"
+            className="flex gap-4 md:gap-8 px-4"
           >
             {[...projects, ...projects].map((project, i) => (
-              <div key={i} className="group relative h-[450px] w-[350px] shrink-0 overflow-hidden rounded-[2.5rem] bg-white/5 md:w-[500px]">
+              <div key={i} className="group relative h-[350px] md:h-[450px] w-[280px] md:w-[500px] shrink-0 overflow-hidden rounded-[2.5rem] bg-white/5">
                 <img 
                   src={project.image} 
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" 
                   alt={project.title}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <div className="absolute bottom-0 left-0 p-10 opacity-0 transition-all duration-500 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
-                  <Badge className="mb-4 bg-accent text-white">{project.category}</Badge>
-                  <h3 className="text-3xl font-bold">{project.title}</h3>
+                <div className="absolute bottom-0 left-0 p-6 md:p-10 opacity-0 transition-all duration-500 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
+                  <Badge className="mb-3 md:mb-4 bg-accent text-white">{project.category}</Badge>
+                  <h3 className="text-2xl md:text-3xl font-bold">{project.title}</h3>
                 </div>
               </div>
             ))}
@@ -260,16 +293,16 @@ export default function HomePage() {
       </section>
 
       {/* Process Section */}
-      <section id="process" className="py-32 bg-secondary/30">
-        <div className="container mx-auto px-6">
-          <div className="mb-20 text-center">
+      <section id="process" className="py-20 md:py-32 bg-secondary/30">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="mb-12 md:mb-20 text-center">
             <Badge variant="outline" className="mb-4 rounded-full border-accent/20 bg-accent/5 px-4 py-1 text-accent">
               Our Method
             </Badge>
-            <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl">How We Work</h2>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">How We Work</h2>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { step: "01", title: "Strategy", desc: "Initial consult to define your vision and budget." },
               { step: "02", title: "Design", desc: "Detailed 3D mockups and material selection." },
@@ -277,8 +310,8 @@ export default function HomePage() {
               { step: "04", title: "Handoff", desc: "Final walkthrough and 2026 quality certification." }
             ].map((item, i) => (
               <div key={i} className="relative p-8 rounded-3xl bg-card shadow-sm hover-lift">
-                <span className="text-5xl font-black text-accent/10 absolute top-4 right-8">{item.step}</span>
-                <h3 className="text-xl font-bold mb-3 relative z-10">{item.title}</h3>
+                <span className="text-4xl md:text-5xl font-black text-accent/10 absolute top-4 right-8">{item.step}</span>
+                <h3 className="text-lg md:text-xl font-bold mb-3 relative z-10">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
@@ -287,53 +320,53 @@ export default function HomePage() {
       </section>
 
       {/* Modern Contact Strategy */}
-      <section id="contact" className="py-32">
-        <div className="container mx-auto px-6">
-          <div className="rounded-[3rem] bg-card p-10 md:p-20 shadow-xl overflow-hidden relative">
+      <section id="contact" className="py-20 md:py-32">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="rounded-[2rem] md:rounded-[3rem] bg-card p-6 md:p-20 shadow-xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 -skew-x-12 translate-x-1/4" />
             
-            <div className="grid gap-16 lg:grid-cols-2 relative z-10">
+            <div className="grid gap-12 lg:grid-cols-2 relative z-10">
               <div>
-                <h2 className="mb-8 text-5xl font-bold tracking-tighter sm:text-7xl">
+                <h2 className="mb-6 md:mb-8 text-4xl font-bold tracking-tighter sm:text-7xl">
                   Start Your <br /><span className="text-accent">Legacy</span> Today.
                 </h2>
-                <div className="space-y-8">
-                  <div className="flex items-center gap-6">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
-                      <Phone className="h-6 w-6 text-accent" />
+                <div className="space-y-6 md:space-y-8">
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <div className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-2xl bg-secondary shrink-0">
+                      <Phone className="h-5 w-5 md:h-6 md:w-6 text-accent" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Quick Contact</p>
-                      <p className="text-xl font-bold">704 712 9947</p>
+                      <p className="text-xs md:text-sm text-muted-foreground">Quick Contact</p>
+                      <p className="text-lg md:text-xl font-bold">704 712 9947</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-6">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
-                      <Mail className="h-6 w-6 text-accent" />
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <div className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-2xl bg-secondary shrink-0">
+                      <Mail className="h-5 w-5 md:h-6 md:w-6 text-accent" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Digital Inquiry</p>
-                      <p className="text-xl font-bold">adrian.pecco@gmail.com</p>
+                      <p className="text-xs md:text-sm text-muted-foreground">Digital Inquiry</p>
+                      <p className="text-lg md:text-xl font-bold">adrian.pecco@gmail.com</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="glass-card rounded-[2rem] p-8 md:p-12">
-                <form onSubmit={handleFormSubmit} className="grid gap-6">
+              <div className="glass-card rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-12">
+                <form onSubmit={handleFormSubmit} className="grid gap-4 md:gap-6">
                   <div className="grid gap-2">
                     <Label htmlFor="name">Lead Contact</Label>
-                    <Input id="name" placeholder="Full Name" required className="h-14 rounded-2xl bg-background/50" />
+                    <Input id="name" placeholder="Full Name" required className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50" />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="email@address.com" required className="h-14 rounded-2xl bg-background/50" />
+                    <Input id="email" type="email" placeholder="email@address.com" required className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50" />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="message">Project Vision</Label>
-                    <Textarea id="message" placeholder="Briefly describe your goals..." className="min-h-[150px] rounded-2xl bg-background/50" />
+                    <Textarea id="message" placeholder="Briefly describe your goals..." className="min-h-[120px] md:min-h-[150px] rounded-xl md:rounded-2xl bg-background/50" />
                   </div>
-                  <Button type="submit" size="lg" className="h-16 rounded-2xl bg-accent text-lg font-bold hover:bg-primary transition-all">
+                  <Button type="submit" size="lg" className="h-14 md:h-16 rounded-xl md:rounded-2xl bg-accent text-base md:text-lg font-bold hover:bg-primary transition-all">
                     Initiate Consult <MoveRight className="ml-2 h-5 w-5" />
                   </Button>
                 </form>
@@ -344,28 +377,28 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-20">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col items-center justify-between gap-10 md:flex-row">
-            <div className="flex flex-col items-center md:items-start">
-              <img src={logoImg} alt="Arp" className="h-20 w-auto mb-4" />
-              <p className="text-muted-foreground max-w-xs text-center md:text-left">
+      <footer className="border-t py-12 md:py-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center justify-between gap-10 lg:flex-row lg:items-start">
+            <div className="flex flex-col items-center lg:items-start">
+              <img src={logoImg} alt="Arp" className="h-16 w-auto mb-6" />
+              <p className="text-muted-foreground max-w-xs text-center lg:text-left">
                 Setting the standard for architectural precision and modern living in 2026.
               </p>
             </div>
             
-            <div className="flex gap-12">
+            <div className="flex gap-16 md:gap-24">
               <div className="space-y-4">
-                <p className="font-bold text-sm uppercase tracking-widest text-accent">Studio</p>
-                <div className="flex flex-col gap-2 text-muted-foreground">
+                <p className="font-bold text-xs uppercase tracking-widest text-accent">Studio</p>
+                <div className="flex flex-col gap-3 text-muted-foreground">
                   <a href="#" className="hover:text-primary transition-colors">Projects</a>
                   <a href="#" className="hover:text-primary transition-colors">Philosophy</a>
                   <a href="#" className="hover:text-primary transition-colors">Process</a>
                 </div>
               </div>
               <div className="space-y-4">
-                <p className="font-bold text-sm uppercase tracking-widest text-accent">Social</p>
-                <div className="flex flex-col gap-2 text-muted-foreground">
+                <p className="font-bold text-xs uppercase tracking-widest text-accent">Social</p>
+                <div className="flex flex-col gap-3 text-muted-foreground">
                   <a href="#" className="hover:text-primary transition-colors">Instagram</a>
                   <a href="#" className="hover:text-primary transition-colors">LinkedIn</a>
                   <a href="#" className="hover:text-primary transition-colors">Dribbble</a>
@@ -373,7 +406,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex flex-col items-center md:items-end gap-4">
+            <div className="flex flex-col items-center lg:items-end gap-6">
               <div className="flex gap-3">
                 <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent">Licensed 2026</Badge>
                 <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent">Insured Platinum</Badge>
