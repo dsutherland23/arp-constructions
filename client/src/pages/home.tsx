@@ -120,7 +120,7 @@ export default function HomePage() {
         <div className="container mx-auto px-6">
           <div className={`flex items-center justify-between rounded-full px-6 py-3 transition-all ${isScrolled ? "glass-card shadow-lg" : "bg-transparent"}`}>
             <div className="flex items-center gap-2">
-              <img src={logoImg} alt="Arp" className="h-16 w-auto" />
+              <img src={logoImg} alt="Arp" className="h-24 md:h-28 w-auto" />
             </div>
             
             <div className="hidden items-center gap-8 md:flex">
@@ -348,7 +348,7 @@ export default function HomePage() {
         <div className="container mx-auto px-6">
           <div className="flex flex-col items-center justify-between gap-10 md:flex-row">
             <div className="flex flex-col items-center md:items-start">
-              <img src={logoImg} alt="Arp" className="h-14 w-auto mb-4" />
+              <img src={logoImg} alt="Arp" className="h-20 w-auto mb-4" />
               <p className="text-muted-foreground max-w-xs text-center md:text-left">
                 Setting the standard for architectural precision and modern living in 2026.
               </p>
