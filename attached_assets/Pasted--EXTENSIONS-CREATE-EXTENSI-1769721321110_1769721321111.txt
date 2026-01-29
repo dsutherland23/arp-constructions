@@ -1,0 +1,143 @@
+-- ================================
+-- EXTENSIONS
+-- ================================
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- ================================
+-- COMPANY INFO
+-- ================================
+CREATE TABLE company_info (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_name TEXT NOT NULL,
+  tagline TEXT,
+  description TEXT,
+  phone TEXT,
+  email TEXT,
+  office_hours TEXT,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- PAGES
+-- ================================
+CREATE TABLE pages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  meta_description TEXT,
+  is_published BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- PAGE SECTIONS
+-- ================================
+CREATE TABLE page_sections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  page_id UUID REFERENCES pages(id) ON DELETE CASCADE,
+  section_type TEXT NOT NULL,
+  headline TEXT,
+  subheadline TEXT,
+  content TEXT,
+  position INTEGER,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- SERVICES
+-- ================================
+CREATE TABLE services (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  description TEXT,
+  cta_text TEXT DEFAULT 'Request Quote',
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- PROJECTS
+-- ================================
+CREATE TABLE projects (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  location TEXT,
+  category TEXT,
+  duration TEXT,
+  description TEXT,
+  is_featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- PROJECT IMAGES
+-- ================================
+CREATE TABLE project_images (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+  image_url TEXT NOT NULL,
+  position INTEGER,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- TESTIMONIALS
+-- ================================
+CREATE TABLE testimonials (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_name TEXT,
+  review TEXT NOT NULL,
+  rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+  project_type TEXT,
+  is_featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- FAQS
+-- ================================
+CREATE TABLE faqs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  question TEXT NOT NULL,
+  answer TEXT NOT NULL,
+  position INTEGER,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- TRUST STATS
+-- ================================
+CREATE TABLE trust_stats (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  label TEXT NOT NULL,
+  value TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- QUOTE REQUESTS (LEADS)
+-- ================================
+CREATE TABLE quote_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT,
+  project_type TEXT,
+  location TEXT,
+  budget_range TEXT,
+  message TEXT,
+  status TEXT DEFAULT 'new',
+  created_at TIMESTAMP DEFAULT now()
+);
+
+-- ================================
+-- CONTACT MESSAGES
+-- ================================
+CREATE TABLE contact_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT now()
+);

@@ -1,0 +1,255 @@
+{
+  "product": {
+    "name": "ARP Constructions Website",
+    "type": "Marketing Website & Lead Generation Platform",
+    "version": "1.0",
+    "inspiration": "HoneyHomes (UX structure only)"
+  },
+
+  "branding": {
+    "company_name": "ARP Constructions",
+    "tagline": "Building with Integrity. Crafting with Precision.",
+    "tone": ["Professional", "Trustworthy", "Modern", "Premium"],
+    "primary_cta": "Get a Quote",
+    "secondary_cta": "View Projects"
+  },
+
+  "goals": {
+    "business_goals": [
+      "Generate qualified construction leads",
+      "Establish brand trust and authority",
+      "Showcase completed and ongoing projects"
+    ],
+    "kpis": [
+      "Quote form submissions",
+      "Conversion rate",
+      "Time on site",
+      "Mobile usability score"
+    ]
+  },
+
+  "navigation": {
+    "main_menu": [
+      "Home",
+      "About",
+      "Services",
+      "Projects",
+      "How It Works",
+      "Testimonials",
+      "FAQs",
+      "Get a Quote",
+      "Contact"
+    ]
+  },
+
+  "pages": {
+    "home": {
+      "hero": {
+        "headline": "Crafting Quality Structures That Stand the Test of Time",
+        "subheadline": "Residential, Commercial & Renovation Experts You Can Trust",
+        "background": "project_video_or_image",
+        "cta_primary": "Get a Quote",
+        "cta_secondary": "View Projects"
+      },
+      "trust_indicators": {
+        "stats": [
+          { "label": "Years Experience", "value": "10+" },
+          { "label": "Projects Completed", "value": "250+" },
+          { "label": "Client Satisfaction", "value": "98%" }
+        ],
+        "badges": ["Licensed", "Insured", "Quality Guaranteed"]
+      },
+      "services_overview": [
+        {
+          "title": "Residential Construction",
+          "description": "Custom homes built with precision, quality, and care.",
+          "link": "/services/residential"
+        },
+        {
+          "title": "Renovations & Remodeling",
+          "description": "Transforming existing spaces into modern, functional designs.",
+          "link": "/services/renovations"
+        },
+        {
+          "title": "Commercial Construction",
+          "description": "Reliable construction solutions for business spaces.",
+          "link": "/services/commercial"
+        },
+        {
+          "title": "Project Management",
+          "description": "End-to-end project oversight, timelines, and budget control.",
+          "link": "/services/project-management"
+        }
+      ],
+      "how_it_works_preview": [
+        "Consultation",
+        "Planning & Design",
+        "Construction",
+        "Final Handover"
+      ],
+      "featured_projects": {
+        "layout": "gallery_slider",
+        "max_items": 6
+      },
+      "testimonials_preview": {
+        "layout": "carousel",
+        "max_items": 3
+      },
+      "final_cta": {
+        "headline": "Ready to Start Your Project?",
+        "cta": "Request a Free Consultation"
+      }
+    },
+
+    "about": {
+      "story": "ARP Constructions was founded with a commitment to quality workmanship, transparent communication, and long-term value.",
+      "mission": "To deliver high-quality construction projects that exceed client expectations.",
+      "values": ["Integrity", "Quality", "Reliability", "Innovation"],
+      "team_section": {
+        "enabled": true,
+        "display": "leadership_focus"
+      }
+    },
+
+    "services": {
+      "residential": {
+        "title": "Residential Construction",
+        "includes": [
+          "Custom home builds",
+          "Structural works",
+          "Finishing & detailing"
+        ],
+        "cta": "Request Quote"
+      },
+      "renovations": {
+        "title": "Renovations & Remodeling",
+        "includes": [
+          "Kitchen & bathroom remodeling",
+          "Extensions",
+          "Interior upgrades"
+        ],
+        "cta": "Request Quote"
+      },
+      "commercial": {
+        "title": "Commercial Construction",
+        "includes": [
+          "Office buildings",
+          "Retail spaces",
+          "Warehouses"
+        ],
+        "cta": "Request Quote"
+      },
+      "project_management": {
+        "title": "Project Management",
+        "includes": [
+          "Planning & scheduling",
+          "Budget control",
+          "Contractor coordination"
+        ],
+        "cta": "Request Quote"
+      }
+    },
+
+    "projects": {
+      "filters": ["Residential", "Commercial", "Renovation"],
+      "project_fields": [
+        "title",
+        "location",
+        "category",
+        "duration",
+        "description",
+        "image_gallery"
+      ]
+    },
+
+    "how_it_works": {
+      "steps": [
+        {
+          "step": 1,
+          "title": "Consultation",
+          "description": "Understanding your goals, budget, and vision."
+        },
+        {
+          "step": 2,
+          "title": "Planning & Design",
+          "description": "Site assessment, drawings, and cost estimation."
+        },
+        {
+          "step": 3,
+          "title": "Construction",
+          "description": "Execution with strict quality and timeline control."
+        },
+        {
+          "step": 4,
+          "title": "Final Handover",
+          "description": "Inspection, completion, and client satisfaction."
+        }
+      ]
+    },
+
+    "testimonials": {
+      "fields": ["client_name", "review", "rating", "project_type"],
+      "display": "grid_and_carousel"
+    },
+
+    "faqs": {
+      "questions": [
+        {
+          "q": "How much does a project cost?",
+          "a": "Pricing depends on scope, materials, and timeline."
+        },
+        {
+          "q": "How long will my project take?",
+          "a": "Timelines vary based on project size and complexity."
+        },
+        {
+          "q": "Do you handle permits?",
+          "a": "Yes, we assist with permits and approvals."
+        }
+      ]
+    },
+
+    "get_a_quote": {
+      "form_fields": [
+        "full_name",
+        "email",
+        "phone",
+        "project_type",
+        "location",
+        "budget_range",
+        "message"
+      ],
+      "form_behavior": {
+        "validation": true,
+        "success_message": "Thank you! We will contact you shortly."
+      }
+    },
+
+    "contact": {
+      "details": {
+        "phone": "+1-XXX-XXX-XXXX",
+        "email": "info@arpconstructions.com",
+        "office_hours": "Mon–Fri, 9am–5pm"
+      },
+      "map": {
+        "enabled": true
+      }
+    }
+  },
+
+  "non_functional_requirements": {
+    "responsive": true,
+    "seo_optimized": true,
+    "accessibility": "WCAG 2.1 AA",
+    "performance_target": "Lighthouse 85+",
+    "security": ["HTTPS", "Spam Protection"]
+  },
+
+  "future_enhancements": [
+    "Client portal",
+    "Project progress tracking",
+    "Blog & knowledge base",
+    "WhatsApp chat integration",
+    "Online scheduling"
+  ]
+}

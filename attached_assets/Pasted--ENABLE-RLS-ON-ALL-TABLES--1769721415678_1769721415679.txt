@@ -1,0 +1,127 @@
+-- ================================
+-- ENABLE RLS ON ALL TABLES
+-- ================================
+ALTER TABLE company_info ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE page_sections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE project_images ENABLE ROW LEVEL SECURITY;
+ALTER TABLE testimonials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE faqs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE trust_stats ENABLE ROW LEVEL SECURITY;
+ALTER TABLE quote_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
+
+-- ================================
+-- PUBLIC READ ACCESS (WEBSITE CONTENT)
+-- ================================
+CREATE POLICY "Public read company info"
+ON company_info FOR SELECT
+USING (true);
+
+CREATE POLICY "Public read pages"
+ON pages FOR SELECT
+USING (is_published = true);
+
+CREATE POLICY "Public read page sections"
+ON page_sections FOR SELECT
+USING (true);
+
+CREATE POLICY "Public read services"
+ON services FOR SELECT
+USING (is_active = true);
+
+CREATE POLICY "Public read projects"
+ON projects FOR SELECT
+USING (true);
+
+CREATE POLICY "Public read project images"
+ON project_images FOR SELECT
+USING (true);
+
+CREATE POLICY "Public read testimonials"
+ON testimonials FOR SELECT
+USING (true);
+
+CREATE POLICY "Public read faqs"
+ON faqs FOR SELECT
+USING (true);
+
+CREATE POLICY "Public read trust stats"
+ON trust_stats FOR SELECT
+USING (true);
+
+-- ================================
+-- PUBLIC WRITE ACCESS (FORMS)
+-- ================================
+CREATE POLICY "Public submit quote requests"
+ON quote_requests FOR INSERT
+WITH CHECK (true);
+
+CREATE POLICY "Public submit contact messages"
+ON contact_messages FOR INSERT
+WITH CHECK (true);
+
+-- ================================
+-- ADMIN FULL ACCESS (AUTHENTICATED USERS)
+-- ================================
+-- NOTE: assumes Lovable/Supabase auth.uid() is available
+
+CREATE POLICY "Admin full access company info"
+ON company_info FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access pages"
+ON pages FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access page sections"
+ON page_sections FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access services"
+ON services FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access projects"
+ON projects FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access project images"
+ON project_images FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access testimonials"
+ON testimonials FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access faqs"
+ON faqs FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin full access trust stats"
+ON trust_stats FOR ALL
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin read quote requests"
+ON quote_requests FOR SELECT
+USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin update quote requests"
+ON quote_requests FOR UPDATE
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin read contact messages"
+ON contact_messages FOR SELECT
+USING (auth.role() = 'authenticated');
