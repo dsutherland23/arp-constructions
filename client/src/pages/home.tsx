@@ -1,54 +1,27 @@
-import { useMemo, useState, useEffect } from "react";
-import { Link } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowRight,
-  BadgeCheck,
-  Building2,
-  ClipboardList,
-  Hammer,
-  Home as HomeIcon,
-  Mail,
-  MapPin,
+import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { 
+  ArrowUpRight, 
+  ChevronRight, 
+  Droplets, 
+  Hammer, 
+  Building2, 
+  ShieldCheck, 
+  Timer, 
+  Quote,
+  MoveRight,
+  Menu,
+  X,
   Phone,
-  Sparkles,
-  Star,
-  Droplets,
-  ChevronDown,
+  Mail,
+  MapPin
 } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
 // Assets
@@ -57,442 +30,329 @@ import renoImg from "@/assets/images/project-reno-1.png";
 import plumbingImg from "@/assets/images/project-plumbing-1.png";
 import constructionImg from "@/assets/images/project-construction-1.png";
 
-const nav = [
-  { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Projects", href: "#projects" },
-  { label: "How It Works", href: "#process" },
-  { label: "FAQs", href: "#faqs" },
-  { label: "Contact", href: "#contact" },
-];
-
-const heroSlides = [
+const projects = [
   {
-    image: renoImg,
-    title: "Luxury Renovations",
-    subtitle: "Transforming spaces into modern masterpieces.",
-  },
-  {
-    image: plumbingImg,
-    title: "Expert Plumbing",
-    subtitle: "Precision engineering for your home infrastructure.",
-  },
-  {
+    title: "The Glass House",
+    category: "Architecture",
     image: constructionImg,
-    title: "Home Development",
-    subtitle: "Building the foundations of your future.",
+    size: "large"
   },
-];
-
-const stats = [
-  { label: "Years Experience", value: "10+" },
-  { label: "Projects Completed", value: "250+" },
-  { label: "Client Satisfaction", value: "98%" },
+  {
+    title: "Minimalist Kitchen",
+    category: "Renovation",
+    image: renoImg,
+    size: "small"
+  },
+  {
+    title: "Hydro Systems",
+    category: "Plumbing",
+    image: plumbingImg,
+    size: "small"
+  },
+  {
+    title: "Urban Loft",
+    category: "Renovation",
+    image: renoImg,
+    size: "medium"
+  }
 ];
 
 const services = [
   {
     title: "Home Development",
-    description: "Custom builds with precision and architectural excellence.",
     icon: Building2,
-    category: "Development",
+    description: "Full-scale architectural planning and construction from foundation to finish.",
+    color: "bg-blue-500/10 text-blue-600"
   },
   {
-    title: "Plumbing Systems",
-    description: "Expert infrastructure and high-end fixture installation.",
+    title: "Modern Plumbing",
     icon: Droplets,
-    category: "Plumbing",
+    description: "Next-gen infrastructure and luxury fixture integration with leak-proof tech.",
+    color: "bg-cyan-500/10 text-cyan-600"
   },
   {
-    title: "Renovations",
-    description: "Modernizing existing structures with premium finishes.",
+    title: "Premium Renovations",
     icon: Hammer,
-    category: "Renovation",
-  },
-  {
-    title: "Project Management",
-    description: "Comprehensive oversight from planning to handover.",
-    icon: ClipboardList,
-    category: "Management",
-  },
+    description: "Turning dated interiors into contemporary living spaces with high-end materials.",
+    color: "bg-indigo-500/10 text-indigo-600"
+  }
 ];
-
-const projects = [
-  {
-    id: 1,
-    title: "The Modern Estate",
-    category: "Development",
-    image: constructionImg,
-    location: "Beverly Hills",
-  },
-  {
-    id: 2,
-    title: "Zen Kitchen Remodel",
-    category: "Renovation",
-    image: renoImg,
-    location: "Santa Monica",
-  },
-  {
-    id: 3,
-    title: "Smart Water System",
-    category: "Plumbing",
-    image: plumbingImg,
-    location: "Malibu",
-  },
-  {
-    id: 4,
-    title: "Industrial Loft",
-    category: "Renovation",
-    image: renoImg,
-    location: "Downtown",
-  },
-  {
-    id: 5,
-    title: "Seaside Villa",
-    category: "Development",
-    image: constructionImg,
-    location: "Venice",
-  },
-];
-
-function Logo() {
-  return (
-    <div className="flex items-center gap-3" data-testid="brand-logo">
-      <img
-        src={logoImg}
-        alt="Arp Construction Logo"
-        className="h-12 w-auto object-contain"
-        data-testid="img-logo"
-      />
-    </div>
-  );
-}
-
-function HeroSlider() {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <section id="home" className="relative h-[90vh] overflow-hidden bg-black" data-testid="section-hero">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="absolute inset-0"
-        >
-          <img
-            src={heroSlides[current].image}
-            alt={heroSlides[current].title}
-            className="h-full w-full object-cover opacity-60"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-        </motion.div>
-      </AnimatePresence>
-
-      <div className="arp-container relative flex h-full flex-col items-center justify-center text-center text-white">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-        >
-          <Badge className="mb-6 rounded-full bg-accent/90 px-4 py-1 text-accent-foreground hover:bg-accent">
-            Premium Construction Services
-          </Badge>
-          <h1 className="arp-title mb-6 text-5xl font-bold tracking-tight sm:text-7xl">
-            {heroSlides[current].title}
-          </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-white/80 sm:text-xl">
-            {heroSlides[current].subtitle}
-          </p>
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button size="lg" className="rounded-full bg-accent px-8 text-accent-foreground hover:bg-accent/90" asChild>
-              <a href="#contact">Get a Quote</a>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full border-white text-white hover:bg-white/10" asChild>
-              <a href="#projects">View Projects</a>
-            </Button>
-          </div>
-        </motion.div>
-
-        <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
-          {heroSlides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              className={`h-1.5 transition-all rounded-full ${
-                i === current ? "w-8 bg-accent" : "w-2 bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 export default function HomePage() {
   const { toast } = useToast();
-  const [filter, setFilter] = useState("All");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const targetRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"]
+  });
 
-  const filteredProjects = filter === "All"
-    ? projects
-    : projects.filter(p => p.category === filter);
+  const heroImages = [constructionImg, renoImg, plumbingImg];
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % heroImages.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Request Sent",
-      description: "Our team will contact you within 24 hours.",
+      title: "Strategy Session Booked",
+      description: "We'll reach out to your team shortly.",
     });
-    (e.currentTarget as HTMLFormElement).reset();
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-background selection:bg-accent selection:text-accent-foreground" data-testid="page-landing">
+    <div className="noise-bg min-h-screen">
       {/* Navigation */}
-      <nav className="fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-        <div className="arp-container flex h-20 items-center justify-between">
-          <Link href="/">
-            <a className="transition-transform hover:scale-105">
-              <Logo />
-            </a>
-          </Link>
-
-          <div className="hidden items-center gap-8 lg:flex">
-            {nav.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground transition hover:text-accent"
-              >
-                {item.label}
-              </a>
-            ))}
-            <Button className="rounded-full bg-primary" asChild>
-              <a href="#contact">Contact Us</a>
+      <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-4" : "py-8"}`}>
+        <div className="container mx-auto px-6">
+          <div className={`flex items-center justify-between rounded-full px-6 py-3 transition-all ${isScrolled ? "glass-card shadow-lg" : "bg-transparent"}`}>
+            <div className="flex items-center gap-2">
+              <img src={logoImg} alt="Arp" className="h-10 w-auto" />
+            </div>
+            
+            <div className="hidden items-center gap-8 md:flex">
+              {["Services", "Projects", "Process", "Contact"].map((item) => (
+                <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-medium tracking-tight text-primary/80 transition-colors hover:text-accent">
+                  {item}
+                </a>
+              ))}
+              <Button size="sm" className="rounded-full bg-primary px-6 hover:bg-accent transition-all">
+                Book a Consult
+              </Button>
+            </div>
+            
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Menu className="h-6 w-6" />
             </Button>
           </div>
         </div>
       </nav>
 
-      <main>
-        <HeroSlider />
+      {/* Hero Section */}
+      <section className="relative h-screen overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeSlide}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5 }}
+            className="absolute inset-0"
+          >
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-background via-background/40 to-transparent" />
+            <img 
+              src={heroImages[activeSlide]} 
+              className="h-full w-full object-cover grayscale-[0.2]" 
+              alt="Hero"
+            />
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Stats Section */}
-        <section className="bg-primary py-12 text-primary-foreground">
-          <div className="arp-container">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="arp-title text-4xl font-bold text-accent">{stat.value}</div>
-                  <div className="text-sm font-medium uppercase tracking-widest text-white/60">{stat.label}</div>
+        <div className="container relative z-20 mx-auto flex h-full flex-col justify-center px-6">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-3xl"
+          >
+            <Badge variant="outline" className="mb-6 rounded-full border-accent/20 bg-accent/5 px-4 py-1 text-accent">
+              <Sparkles className="mr-2 h-3 w-3" />
+              Crafting Excellence in 2026
+            </Badge>
+            <h1 className="mb-6 text-6xl font-bold leading-[1.1] tracking-tighter text-primary sm:text-8xl">
+              Building with <span className="text-gradient">Precision.</span>
+              <br />Living with Style.
+            </h1>
+            <p className="mb-10 max-w-xl text-lg text-muted-foreground sm:text-xl">
+              Arp Construction merges architectural integrity with modern design aesthetics to deliver spaces that inspire.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Button size="lg" className="group rounded-full bg-primary px-8 hover:bg-accent">
+                Start Project
+                <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </Button>
+              <Button size="lg" variant="outline" className="rounded-full px-8">
+                Explore Portfolio
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Bento Grid Services */}
+      <section id="services" className="py-32">
+        <div className="container mx-auto px-6">
+          <div className="mb-20">
+            <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl">Our Capabilities</h2>
+            <div className="mt-4 h-1 w-24 bg-accent" />
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-3">
+            {services.map((service, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="group relative overflow-hidden rounded-[2rem] bg-card p-10 transition-all hover:bg-secondary/50"
+              >
+                <div className={`mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl ${service.color}`}>
+                  <service.icon className="h-8 w-8" />
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Services Section */}
-        <section id="services" className="py-24">
-          <div className="arp-container">
-            <div className="mb-16 text-center">
-              <h2 className="arp-title mb-4 text-4xl font-bold">Our Expertise</h2>
-              <div className="mx-auto h-1 w-20 bg-accent" />
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {services.map((service) => (
-                <Card key={service.title} className="group overflow-hidden rounded-2xl border-none bg-secondary/50 transition-all hover:bg-secondary">
-                  <CardHeader>
-                    <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                      <service.icon className="h-6 w-6" />
-                    </div>
-                    <CardTitle className="arp-title text-xl">{service.title}</CardTitle>
-                    <CardDescription>{service.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Projects Section */}
-        <section id="projects" className="bg-secondary/30 py-24">
-          <div className="arp-container">
-            <div className="mb-16 flex flex-col items-center justify-between gap-6 sm:flex-row">
-              <div className="text-center sm:text-left">
-                <h2 className="arp-title text-4xl font-bold">Latest Work</h2>
-                <p className="text-muted-foreground">Crafting excellence across every project.</p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-2">
-                {["All", "Development", "Plumbing", "Renovation"].map((f) => (
-                  <Button
-                    key={f}
-                    variant={filter === f ? "default" : "outline"}
-                    className="rounded-full"
-                    onClick={() => setFilter(f)}
-                  >
-                    {f}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <motion.div
-              layout
-              className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredProjects.map((project) => (
-                  <motion.div
-                    key={project.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.4 }}
-                    className="group relative aspect-[4/3] overflow-hidden rounded-3xl"
-                  >
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                    <div className="absolute bottom-0 left-0 p-8 text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      <div className="text-xs font-bold uppercase tracking-widest text-accent mb-2">{project.category}</div>
-                      <h3 className="arp-title text-2xl font-bold">{project.title}</h3>
-                      <div className="flex items-center gap-2 text-sm text-white/80 mt-2">
-                        <MapPin className="h-4 w-4" /> {project.location}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Process Section */}
-        <section id="process" className="py-24">
-          <div className="arp-container text-center">
-            <h2 className="arp-title mb-16 text-4xl font-bold">Our Process</h2>
-            <div className="relative grid gap-12 lg:grid-cols-4">
-              {[
-                { title: "Consult", desc: "Understanding your vision" },
-                { title: "Plan", desc: "Detailed engineering" },
-                { title: "Build", desc: "Precision construction" },
-                { title: "Deliver", desc: "Excellence handed over" },
-              ].map((step, i) => (
-                <div key={i} className="relative z-10">
-                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-2xl font-bold text-accent-foreground shadow-lg shadow-accent/20">
-                    {i + 1}
-                  </div>
-                  <h3 className="arp-title text-xl font-bold mb-2">{step.title}</h3>
-                  <p className="text-muted-foreground">{step.desc}</p>
+                <h3 className="mb-4 text-2xl font-bold">{service.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{service.description}</p>
+                <div className="absolute bottom-8 right-8 opacity-0 transition-opacity group-hover:opacity-100">
+                  <ChevronRight className="h-6 w-6 text-accent" />
                 </div>
-              ))}
-              <div className="absolute top-8 left-0 hidden h-0.5 w-full bg-secondary lg:block" aria-hidden />
-            </div>
+              </motion.div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Contact/Quote Section */}
-        <section id="contact" className="py-24 bg-primary text-primary-foreground">
-          <div className="arp-container">
-            <div className="grid gap-16 lg:grid-cols-2">
+      {/* Marquee/Scrolling Projects */}
+      <section id="projects" className="bg-primary py-32 text-primary-foreground">
+        <div className="container mx-auto mb-20 px-6">
+          <div className="flex items-end justify-between">
+            <h2 className="text-4xl font-bold tracking-tighter sm:text-6xl">Visual Proof</h2>
+            <Button variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10">
+              View All Case Studies
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex overflow-hidden pb-10">
+          <motion.div 
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="flex gap-8 px-4"
+          >
+            {[...projects, ...projects].map((project, i) => (
+              <div key={i} className="group relative h-[450px] w-[350px] shrink-0 overflow-hidden rounded-[2.5rem] bg-white/5 md:w-[500px]">
+                <img 
+                  src={project.image} 
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                  alt={project.title}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="absolute bottom-0 left-0 p-10 opacity-0 transition-all duration-500 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
+                  <Badge className="mb-4 bg-accent text-white">{project.category}</Badge>
+                  <h3 className="text-3xl font-bold">{project.title}</h3>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Modern Contact Strategy */}
+      <section id="contact" className="py-32">
+        <div className="container mx-auto px-6">
+          <div className="rounded-[3rem] bg-card p-10 md:p-20 shadow-xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 -skew-x-12 translate-x-1/4" />
+            
+            <div className="grid gap-16 lg:grid-cols-2 relative z-10">
               <div>
-                <h2 className="arp-title mb-6 text-5xl font-bold">Ready to start your journey?</h2>
-                <p className="mb-12 text-lg text-white/60">
-                  Whether it's a major development or a plumbing emergency, our team is ready to bring precision and integrity to your door.
-                </p>
-
-                <div className="grid gap-6">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-accent">
-                      <Phone className="h-6 w-6" />
+                <h2 className="mb-8 text-5xl font-bold tracking-tighter sm:text-7xl">
+                  Start Your <br /><span className="text-accent">Legacy</span> Today.
+                </h2>
+                <div className="space-y-8">
+                  <div className="flex items-center gap-6">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
+                      <Phone className="h-6 w-6 text-accent" />
                     </div>
                     <div>
-                      <div className="text-sm text-white/60">Call Us Anytime</div>
-                      <div className="text-xl font-bold">+1 (555) 000-0000</div>
+                      <p className="text-sm text-muted-foreground">Quick Contact</p>
+                      <p className="text-xl font-bold">+1 (888) ARP-BUILD</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-accent">
-                      <Mail className="h-6 w-6" />
+                  <div className="flex items-center gap-6">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary">
+                      <Mail className="h-6 w-6 text-accent" />
                     </div>
                     <div>
-                      <div className="text-sm text-white/60">Email Support</div>
-                      <div className="text-xl font-bold">hello@arpconstruction.com</div>
+                      <p className="text-sm text-muted-foreground">Digital Inquiry</p>
+                      <p className="text-xl font-bold">studio@arp.construction</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <Card className="rounded-[2.5rem] border-none bg-white p-2 shadow-2xl">
-                <CardHeader className="text-center pt-8">
-                  <CardTitle className="arp-title text-3xl text-primary">Get a Free Quote</CardTitle>
-                  <CardDescription>We typically respond in under 2 hours.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={onSubmit} className="grid gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="name" className="text-primary">Full Name</Label>
-                      <Input id="name" placeholder="John Doe" required className="rounded-xl border-secondary" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-primary">Email</Label>
-                        <Input id="email" type="email" placeholder="john@example.com" required className="rounded-xl border-secondary" />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label className="text-primary">Service</Label>
-                        <Select required>
-                          <SelectTrigger className="rounded-xl border-secondary">
-                            <SelectValue placeholder="Select service" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="dev">Home Development</SelectItem>
-                            <SelectItem value="plumbing">Plumbing</SelectItem>
-                            <SelectItem value="reno">Renovation</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="message" className="text-primary">Project Details</Label>
-                      <Textarea id="message" placeholder="Tell us about your project..." className="min-h-[120px] rounded-xl border-secondary" />
-                    </div>
-                    <Button type="submit" size="lg" className="rounded-xl bg-accent text-accent-foreground hover:bg-accent/90">
-                      Send Quote Request
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+              <div className="glass-card rounded-[2rem] p-8 md:p-12">
+                <form onSubmit={handleFormSubmit} className="grid gap-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Lead Contact</Label>
+                    <Input id="name" placeholder="Full Name" required className="h-14 rounded-2xl bg-background/50" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input id="email" type="email" placeholder="email@address.com" required className="h-14 rounded-2xl bg-background/50" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="message">Project Vision</Label>
+                    <Textarea id="message" placeholder="Briefly describe your goals..." className="min-h-[150px] rounded-2xl bg-background/50" />
+                  </div>
+                  <Button type="submit" size="lg" className="h-16 rounded-2xl bg-accent text-lg font-bold hover:bg-primary transition-all">
+                    Initiate Consult <MoveRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </form>
+              </div>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
-      <footer className="border-t py-12">
-        <div className="arp-container flex flex-col items-center justify-between gap-6 sm:flex-row">
-          <Logo />
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Arp Construction. Built with Integrity.
-          </p>
-          <div className="flex gap-4">
-            <Badge variant="outline" className="rounded-full">Licensed</Badge>
-            <Badge variant="outline" className="rounded-full">Insured</Badge>
+      {/* Footer */}
+      <footer className="border-t py-20">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col items-center justify-between gap-10 md:flex-row">
+            <div className="flex flex-col items-center md:items-start">
+              <img src={logoImg} alt="Arp" className="h-10 w-auto mb-4" />
+              <p className="text-muted-foreground max-w-xs text-center md:text-left">
+                Setting the standard for architectural precision and modern living in 2026.
+              </p>
+            </div>
+            
+            <div className="flex gap-12">
+              <div className="space-y-4">
+                <p className="font-bold text-sm uppercase tracking-widest text-accent">Studio</p>
+                <div className="flex flex-col gap-2 text-muted-foreground">
+                  <a href="#" className="hover:text-primary transition-colors">Projects</a>
+                  <a href="#" className="hover:text-primary transition-colors">Philosophy</a>
+                  <a href="#" className="hover:text-primary transition-colors">Process</a>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <p className="font-bold text-sm uppercase tracking-widest text-accent">Social</p>
+                <div className="flex flex-col gap-2 text-muted-foreground">
+                  <a href="#" className="hover:text-primary transition-colors">Instagram</a>
+                  <a href="#" className="hover:text-primary transition-colors">LinkedIn</a>
+                  <a href="#" className="hover:text-primary transition-colors">Dribbble</a>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end gap-4">
+              <div className="flex gap-3">
+                <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent">Licensed 2026</Badge>
+                <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent">Insured Platinum</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                © {new Date().getFullYear()} Arp Construction. Designed for Excellence.
+              </p>
+            </div>
           </div>
         </div>
       </footer>
