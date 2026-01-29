@@ -26,33 +26,34 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
 // Assets
-import logoImg from "@assets/WhatsApp_Image_2026-01-21_at_21.03.08_1769722462027.jpeg";
+import logoImg from "@assets/ARP_logo_1769723239419.png";
 import renoImg from "@/assets/images/project-reno-1.png";
 import plumbingImg from "@/assets/images/project-plumbing-1.png";
-import constructionImg from "@/assets/images/project-construction-1.png";
+import bathroomImg from "@/assets/images/project-bathroom.png";
+import kitchenImg from "@/assets/images/project-kitchen.png";
 
 const projects = [
   {
-    title: "The Glass House",
-    category: "Architecture",
-    image: constructionImg,
+    title: "Luxury Kitchen Suite",
+    category: "Kitchen Renovation",
+    image: kitchenImg,
     size: "large"
   },
   {
-    title: "Minimalist Kitchen",
-    category: "Renovation",
-    image: renoImg,
+    title: "Modern Spa Retreat",
+    category: "Bathroom Renovation",
+    image: bathroomImg,
     size: "small"
   },
   {
-    title: "Hydro Systems",
+    title: "High-Flow Infrastructure",
     category: "Plumbing",
     image: plumbingImg,
     size: "small"
   },
   {
-    title: "Urban Loft",
-    category: "Renovation",
+    title: "Open-Concept Living",
+    category: "Interior Renovation",
     image: renoImg,
     size: "medium"
   }
@@ -60,21 +61,21 @@ const projects = [
 
 const services = [
   {
-    title: "Home Development",
-    icon: Building2,
-    description: "Full-scale architectural planning and construction from foundation to finish.",
+    title: "Kitchen Renovations",
+    icon: Hammer,
+    description: "Bespoke kitchen transformations combining ergonomic design with premium materials and high-end appliances.",
     color: "bg-blue-500/10 text-blue-600"
   },
   {
-    title: "Modern Plumbing",
+    title: "Bathroom Renovations",
     icon: Droplets,
-    description: "Next-gen infrastructure and luxury fixture integration with leak-proof tech.",
+    description: "Creating spa-like sanctuaries with luxury fixtures, custom tiling, and advanced waterproofing systems.",
     color: "bg-cyan-500/10 text-cyan-600"
   },
   {
-    title: "Premium Renovations",
-    icon: Hammer,
-    description: "Turning dated interiors into contemporary living spaces with high-end materials.",
+    title: "Interior Home Renovations",
+    icon: Building2,
+    description: "Complete interior overhauls that redefine your living space, from structural changes to fine finishing.",
     color: "bg-indigo-500/10 text-indigo-600"
   }
 ];
@@ -89,7 +90,7 @@ export default function HomePage() {
     offset: ["start start", "end end"]
   });
 
-  const heroImages = [constructionImg, renoImg, plumbingImg];
+  const heroImages = [kitchenImg, bathroomImg, renoImg, plumbingImg];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
