@@ -304,7 +304,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Quick Contact</p>
-                      <p className="text-xl font-bold">+1 (888) ARP-BUILD</p>
+                      <p className="text-xl font-bold">704 712 9947</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
@@ -313,7 +313,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Digital Inquiry</p>
-                      <p className="text-xl font-bold">studio@arp.construction</p>
+                      <p className="text-xl font-bold">adrian.pecco@gmail.com</p>
                     </div>
                   </div>
                 </div>
