@@ -484,6 +484,9 @@ export default function HomePage() {
               <p className="text-xs text-muted-foreground">
                 © {new Date().getFullYear()} Arp Construction. Designed for Excellence.
               </p>
+              <p className="text-xs text-muted-foreground">
+                created by <a href="https://www.instagram.com/socialkon10_cre8tive/" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Socialkon10 Marketing</a>
+              </p>
             </div>
           </div>
         </div>
