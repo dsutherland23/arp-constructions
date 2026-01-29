@@ -392,7 +392,14 @@ export default function HomePage() {
                 <p className="font-bold text-xs uppercase tracking-widest text-accent">Studio</p>
                 <div className="flex flex-col gap-3 text-muted-foreground">
                   <a href="#" className="hover:text-primary transition-colors">Projects</a>
-                  <a href="#" className="hover:text-primary transition-colors">Philosophy</a>
+                  <a 
+                    href="/assets/business-card-front.jpg" 
+                    download="ARP_Construction_Business_Card.jpg"
+                    className="hover:text-primary transition-colors flex items-center gap-2"
+                  >
+                    Digital Card
+                    <Badge variant="outline" className="text-[10px] py-0 px-1 border-accent/20 bg-accent/5 text-accent">QR</Badge>
+                  </a>
                   <a href="#" className="hover:text-primary transition-colors">Process</a>
                 </div>
               </div>
