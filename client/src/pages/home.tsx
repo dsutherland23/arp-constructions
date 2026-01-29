@@ -177,9 +177,11 @@ export default function HomePage() {
                     {item}
                   </a>
                 ))}
-                <Button className="rounded-full bg-primary w-full mt-2" onClick={() => setIsMobileMenuOpen(false)}>
-                  Book a Consult
-                </Button>
+                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="rounded-full bg-primary w-full mt-2">
+                    Book a Consult
+                  </Button>
+                </a>
               </div>
             </motion.div>
           )}
@@ -225,13 +227,17 @@ export default function HomePage() {
               Arp Construction merges architectural integrity with modern design aesthetics to deliver spaces that inspire.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="group rounded-full bg-primary px-8 hover:bg-accent w-full sm:w-auto">
-                Start Project
-                <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-              </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8 w-full sm:w-auto">
-                Explore Portfolio
-              </Button>
+              <a href="#contact" className="w-full sm:w-auto">
+                <Button size="lg" className="group rounded-full bg-primary px-8 hover:bg-accent w-full">
+                  Start Project
+                  <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                </Button>
+              </a>
+              <a href="#projects" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="rounded-full px-8 w-full">
+                  Explore Portfolio
+                </Button>
+              </a>
             </div>
           </motion.div>
         </div>
@@ -367,7 +373,7 @@ export default function HomePage() {
               <div className="glass-card rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-12">
                 <form onSubmit={handleFormSubmit} className="grid gap-4 md:gap-6">
                   <div className="grid gap-2">
-                    <Label htmlFor="name">Lead Contact</Label>
+                    <Label htmlFor="name">Contact Us</Label>
                     <Input id="name" placeholder="Full Name" required className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50" />
                   </div>
                   <div className="grid gap-2">
