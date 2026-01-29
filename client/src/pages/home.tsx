@@ -15,7 +15,9 @@ import {
   Phone,
   Mail,
   MapPin,
-  Sparkles
+  Sparkles,
+  Download,
+  QrCode
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +25,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
 // Assets
@@ -31,6 +40,8 @@ import renoImg from "@/assets/images/project-reno-1.png";
 import plumbingImg from "@/assets/images/project-plumbing-1.png";
 import bathroomImg from "@/assets/images/project-bathroom.png";
 import kitchenImg from "@/assets/images/project-kitchen.png";
+import cardFront from "/assets/business-card-front.jpg";
+import cardBack from "/assets/business-card-back.jpg";
 
 const projects = [
   {
@@ -392,14 +403,43 @@ export default function HomePage() {
                 <p className="font-bold text-xs uppercase tracking-widest text-accent">Studio</p>
                 <div className="flex flex-col gap-3 text-muted-foreground">
                   <a href="#" className="hover:text-primary transition-colors">Projects</a>
-                  <a 
-                    href="/assets/business-card-front.jpg" 
-                    download="ARP_Construction_Business_Card.jpg"
-                    className="hover:text-primary transition-colors flex items-center gap-2"
-                  >
-                    Digital Card
-                    <Badge variant="outline" className="text-[10px] py-0 px-1 border-accent/20 bg-accent/5 text-accent">QR</Badge>
-                  </a>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="hover:text-primary transition-colors flex items-center gap-2 cursor-pointer w-fit">
+                        Digital Card
+                        <Badge variant="outline" className="text-[10px] py-0 px-1 border-accent/20 bg-accent/5 text-accent">QR</Badge>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-lg rounded-3xl overflow-hidden border-none glass-card p-0 gap-0">
+                      <div className="p-6 md:p-8">
+                        <DialogHeader className="mb-6">
+                          <DialogTitle className="text-2xl font-bold tracking-tight">Connect with ARP</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-6">
+                          <div className="relative aspect-[1.75/1] w-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                            <img src={cardFront} alt="Business Card Front" className="w-full h-full object-cover" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <Button asChild className="rounded-2xl h-14 bg-accent hover:bg-primary transition-all">
+                              <a href={cardFront} download="ARP_Construction_Card.jpg" className="flex items-center justify-center gap-2">
+                                <Download className="h-5 w-5" />
+                                Download
+                              </a>
+                            </Button>
+                            <div className="bg-white p-2 rounded-2xl shadow-inner flex items-center justify-center aspect-square h-14 w-full">
+                              <QrCode className="h-8 w-8 text-primary" />
+                              <span className="text-[10px] font-bold ml-1 uppercase">Scan QR</span>
+                            </div>
+                          </div>
+                          <div className="p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                            <p className="text-sm text-center text-muted-foreground">
+                              Scan the QR code on the card to save our contact info directly to your phone.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   <a href="#" className="hover:text-primary transition-colors">Process</a>
                 </div>
               </div>
