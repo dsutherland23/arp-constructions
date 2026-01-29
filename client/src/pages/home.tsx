@@ -1,7 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
-import heroBg from "@/assets/images/arp-hero-bg.png";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   BadgeCheck,
@@ -14,6 +13,8 @@ import {
   Phone,
   Sparkles,
   Star,
+  Droplets,
+  ChevronDown,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -50,15 +51,37 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
+// Assets
+import logoImg from "@assets/WhatsApp_Image_2026-01-21_at_21.03.08_1769722462027.jpeg";
+import renoImg from "@/assets/images/project-reno-1.png";
+import plumbingImg from "@/assets/images/project-plumbing-1.png";
+import constructionImg from "@/assets/images/project-construction-1.png";
+
 const nav = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Projects", href: "/projects" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Testimonials", href: "/testimonials" },
-  { label: "FAQs", href: "/faqs" },
-  { label: "Contact", href: "/contact" },
+  { label: "Home", href: "#home" },
+  { label: "Services", href: "#services" },
+  { label: "Projects", href: "#projects" },
+  { label: "How It Works", href: "#process" },
+  { label: "FAQs", href: "#faqs" },
+  { label: "Contact", href: "#contact" },
+];
+
+const heroSlides = [
+  {
+    image: renoImg,
+    title: "Luxury Renovations",
+    subtitle: "Transforming spaces into modern masterpieces.",
+  },
+  {
+    image: plumbingImg,
+    title: "Expert Plumbing",
+    subtitle: "Precision engineering for your home infrastructure.",
+  },
+  {
+    image: constructionImg,
+    title: "Home Development",
+    subtitle: "Building the foundations of your future.",
+  },
 ];
 
 const stats = [
@@ -67,611 +90,234 @@ const stats = [
   { label: "Client Satisfaction", value: "98%" },
 ];
 
-const badges = ["Licensed", "Insured", "Quality Guaranteed"];
-
 const services = [
   {
-    title: "Residential Construction",
-    description: "Custom homes built with precision, quality, and care.",
-    href: "/services#residential",
-    icon: HomeIcon,
-  },
-  {
-    title: "Renovations & Remodeling",
-    description: "Transforming existing spaces into modern, functional designs.",
-    href: "/services#renovations",
-    icon: Hammer,
-  },
-  {
-    title: "Commercial Construction",
-    description: "Reliable construction solutions for business spaces.",
-    href: "/services#commercial",
+    title: "Home Development",
+    description: "Custom builds with precision and architectural excellence.",
     icon: Building2,
+    category: "Development",
+  },
+  {
+    title: "Plumbing Systems",
+    description: "Expert infrastructure and high-end fixture installation.",
+    icon: Droplets,
+    category: "Plumbing",
+  },
+  {
+    title: "Renovations",
+    description: "Modernizing existing structures with premium finishes.",
+    icon: Hammer,
+    category: "Renovation",
   },
   {
     title: "Project Management",
-    description: "End-to-end oversight for timelines, quality, and budgets.",
-    href: "/services#project-management",
+    description: "Comprehensive oversight from planning to handover.",
     icon: ClipboardList,
+    category: "Management",
   },
 ];
 
-const steps = [
+const projects = [
   {
-    title: "Consultation",
-    description: "We learn your goals, budget, and vision, then map out next steps.",
+    id: 1,
+    title: "The Modern Estate",
+    category: "Development",
+    image: constructionImg,
+    location: "Beverly Hills",
   },
   {
-    title: "Planning & Design",
-    description: "Site assessment, drawings, and transparent cost estimation.",
+    id: 2,
+    title: "Zen Kitchen Remodel",
+    category: "Renovation",
+    image: renoImg,
+    location: "Santa Monica",
   },
   {
-    title: "Construction",
-    description: "Execution with strict quality control and timeline management.",
+    id: 3,
+    title: "Smart Water System",
+    category: "Plumbing",
+    image: plumbingImg,
+    location: "Malibu",
   },
   {
-    title: "Final Handover",
-    description: "A detailed inspection and finish you can feel proud of.",
-  },
-];
-
-const featuredProjects = [
-  {
-    id: "p1",
-    title: "Modern Family Home",
-    location: "Westwood",
-    category: "Residential",
-    description: "A warm, modern build with premium finishes and timeless curb appeal.",
-  },
-  {
-    id: "p2",
-    title: "Retail Fit-Out",
+    id: 4,
+    title: "Industrial Loft",
+    category: "Renovation",
+    image: renoImg,
     location: "Downtown",
-    category: "Commercial",
-    description: "Fast-turn retail build with durable materials and clean detailing.",
   },
   {
-    id: "p3",
-    title: "Kitchen & Bath Remodel",
-    location: "Riverside",
-    category: "Renovation",
-    description: "High-function remodel with better flow, storage, and lighting.",
-  },
-  {
-    id: "p4",
-    title: "Office Refresh",
-    location: "Midtown",
-    category: "Commercial",
-    description: "New partitions, acoustic solutions, and a refreshed client area.",
-  },
-  {
-    id: "p5",
-    title: "Home Extension",
-    location: "Brookfield",
-    category: "Renovation",
-    description: "Seamless extension to add space without compromising character.",
-  },
-  {
-    id: "p6",
-    title: "Contemporary Duplex",
-    location: "Oak Hills",
-    category: "Residential",
-    description: "A smart multi-unit build balancing privacy, light, and efficiency.",
-  },
-];
-
-const testimonials = [
-  {
-    id: "t1",
-    name: "Amelia R.",
-    type: "Renovation",
-    rating: 5,
-    review:
-      "Communication was clear from day one. The finish quality is excellent and the timeline was respected.",
-  },
-  {
-    id: "t2",
-    name: "Jason M.",
-    type: "Residential",
-    rating: 5,
-    review:
-      "ARP handled everything professionally. The build feels solid, thoughtful, and truly well crafted.",
-  },
-  {
-    id: "t3",
-    name: "Priya K.",
-    type: "Commercial",
-    rating: 5,
-    review:
-      "Reliable team with strong project management. Our fit-out was delivered with minimal downtime.",
-  },
-];
-
-const faqs = [
-  {
-    q: "How much does a project cost?",
-    a: "Pricing depends on scope, materials, and timeline. We provide itemized estimates so you know exactly what to expect.",
-  },
-  {
-    q: "How long will my project take?",
-    a: "Timelines vary based on complexity. After consultation, we share a clear schedule with milestone check-ins.",
-  },
-  {
-    q: "Do you handle permits?",
-    a: "Yes. We assist with permits and approvals and guide you through the requirements for your area.",
+    id: 5,
+    title: "Seaside Villa",
+    category: "Development",
+    image: constructionImg,
+    location: "Venice",
   },
 ];
 
 function Logo() {
   return (
-    <div className="flex items-center gap-2" data-testid="brand-arp">
-      <div
-        className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm"
+    <div className="flex items-center gap-3" data-testid="brand-logo">
+      <img
+        src={logoImg}
+        alt="Arp Construction Logo"
+        className="h-12 w-auto object-contain"
         data-testid="img-logo"
-        aria-hidden
-      >
-        <Sparkles className="h-4 w-4" />
-      </div>
-      <div className="leading-tight">
-        <div className="arp-title text-[15px] font-semibold" data-testid="text-company-name">
-          ARP Constructions
-        </div>
-        <div
-          className="text-xs text-muted-foreground"
-          data-testid="text-company-tagline"
+      />
+    </div>
+  );
+}
+
+function HeroSlider() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section id="home" className="relative h-[90vh] overflow-hidden bg-black" data-testid="section-hero">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="absolute inset-0"
         >
-          Building with Integrity. Crafting with Precision.
-        </div>
-      </div>
-    </div>
-  );
-}
+          <img
+            src={heroSlides[current].image}
+            alt={heroSlides[current].title}
+            className="h-full w-full object-cover opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        </motion.div>
+      </AnimatePresence>
 
-function TopNav() {
-  return (
-    <div className="sticky top-0 z-50">
-      <div className="arp-grain arp-grid-bg">
-        <div className="arp-container">
-          <div className="flex h-16 items-center justify-between gap-3">
-            <Link href="/" data-testid="link-home" className="arp-focus-ring rounded-xl">
-              <Logo />
-            </Link>
-
-            <div className="hidden items-center gap-1 lg:flex" data-testid="nav-desktop">
-              {nav.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="arp-focus-ring rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:text-foreground"
-                  data-testid={`link-${item.label.toLowerCase().replaceAll(" ", "-")}`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2" data-testid="nav-cta">
-              <Button asChild className="arp-focus-ring rounded-xl" data-testid="button-get-quote">
-                <Link href="/quote" data-testid="link-quote">
-                  Get a Quote
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="h-px w-full bg-border/60" />
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border bg-card/70 px-4 py-3 shadow-sm" data-testid={`card-stat-${label}`}>
-      <div className="arp-title text-2xl font-semibold" data-testid={`text-stat-value-${label}`}>
-        {value}
-      </div>
-      <div className="text-sm text-muted-foreground" data-testid={`text-stat-label-${label}`}>
-        {label}
-      </div>
-    </div>
-  );
-}
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-1" data-testid="rating-stars">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={
-            "h-4 w-4 " +
-            (i < rating ? "fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" : "text-muted")
-          }
-          strokeWidth={1.5}
-          aria-hidden
-        />
-      ))}
-    </div>
-  );
-}
-
-function QuoteInline() {
-  const { toast } = useToast();
-  const [projectType, setProjectType] = useState<string>("");
-
-  const budgetOptions = useMemo(
-    () => [
-      "$10k\u2013$25k",
-      "$25k\u2013$50k",
-      "$50k\u2013$100k",
-      "$100k+",
-      "Not sure yet",
-    ],
-    [],
-  );
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    toast({
-      title: "Request received",
-      description: "Thank you! We will contact you shortly.",
-    });
-    (e.currentTarget as HTMLFormElement).reset();
-    setProjectType("");
-  }
-
-  return (
-    <Card className="arp-glass rounded-3xl" data-testid="card-quote">
-      <CardHeader>
-        <CardTitle className="arp-title text-xl" data-testid="text-quote-title">
-          Get a fast, detailed quote
-        </CardTitle>
-        <CardDescription data-testid="text-quote-subtitle">
-          Tell us a bit about your project. Well follow up with next steps.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={onSubmit} className="grid gap-4" data-testid="form-quote">
-          <div className="grid gap-2" data-testid="group-name">
-            <Label htmlFor="fullName" data-testid="label-full-name">Full name</Label>
-            <Input
-              id="fullName"
-              name="full_name"
-              required
-              placeholder="Your name"
-              className="arp-focus-ring rounded-xl"
-              data-testid="input-full-name"
-            />
-          </div>
-
-          <div className="grid gap-2" data-testid="group-email">
-            <Label htmlFor="email" data-testid="label-email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              required
-              placeholder="you@company.com"
-              className="arp-focus-ring rounded-xl"
-              data-testid="input-email"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="grid-two">
-            <div className="grid gap-2" data-testid="group-phone">
-              <Label htmlFor="phone" data-testid="label-phone">Phone</Label>
-              <Input
-                id="phone"
-                name="phone"
-                placeholder="(555) 123-4567"
-                className="arp-focus-ring rounded-xl"
-                data-testid="input-phone"
-              />
-            </div>
-
-            <div className="grid gap-2" data-testid="group-location">
-              <Label htmlFor="location" data-testid="label-location">Location</Label>
-              <Input
-                id="location"
-                name="location"
-                placeholder="City / Suburb"
-                className="arp-focus-ring rounded-xl"
-                data-testid="input-location"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="grid-selects">
-            <div className="grid gap-2" data-testid="group-project-type">
-              <Label data-testid="label-project-type">Project type</Label>
-              <Select value={projectType} onValueChange={setProjectType}>
-                <SelectTrigger className="arp-focus-ring rounded-xl" data-testid="select-project-type">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent data-testid="select-project-type-menu">
-                  <SelectItem value="Residential" data-testid="select-project-type-residential">Residential</SelectItem>
-                  <SelectItem value="Renovation" data-testid="select-project-type-renovation">Renovation</SelectItem>
-                  <SelectItem value="Commercial" data-testid="select-project-type-commercial">Commercial</SelectItem>
-                  <SelectItem value="Project Management" data-testid="select-project-type-pm">Project Management</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2" data-testid="group-budget">
-              <Label data-testid="label-budget">Budget range</Label>
-              <Select>
-                <SelectTrigger className="arp-focus-ring rounded-xl" data-testid="select-budget">
-                  <SelectValue placeholder="Select budget" />
-                </SelectTrigger>
-                <SelectContent data-testid="select-budget-menu">
-                  {budgetOptions.map((b) => (
-                    <SelectItem
-                      key={b}
-                      value={b}
-                      data-testid={`select-budget-${b.replaceAll("$", "").replaceAll("\u2013", "-").replaceAll(" ", "-")}`}
-                    >
-                      {b}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid gap-2" data-testid="group-message">
-            <Label htmlFor="message" data-testid="label-message">Message</Label>
-            <Textarea
-              id="message"
-              name="message"
-              placeholder="What are you building? Any deadlines or details?"
-              className="arp-focus-ring min-h-24 rounded-xl"
-              data-testid="textarea-message"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row" data-testid="group-submit">
-            <Button type="submit" className="arp-focus-ring rounded-xl" data-testid="button-submit-quote">
-              Request a Free Consultation
-              <ArrowRight className="ml-2 h-4 w-4" />
+      <div className="arp-container relative flex h-full flex-col items-center justify-center text-center text-white">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+        >
+          <Badge className="mb-6 rounded-full bg-accent/90 px-4 py-1 text-accent-foreground hover:bg-accent">
+            Premium Construction Services
+          </Badge>
+          <h1 className="arp-title mb-6 text-5xl font-bold tracking-tight sm:text-7xl">
+            {heroSlides[current].title}
+          </h1>
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-white/80 sm:text-xl">
+            {heroSlides[current].subtitle}
+          </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <Button size="lg" className="rounded-full bg-accent px-8 text-accent-foreground hover:bg-accent/90" asChild>
+              <a href="#contact">Get a Quote</a>
             </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              className="arp-focus-ring rounded-xl"
-              data-testid="button-view-projects"
-              asChild
-            >
-              <Link href="/projects" data-testid="link-view-projects">
-                View Projects
-              </Link>
+            <Button size="lg" variant="outline" className="rounded-full border-white text-white hover:bg-white/10" asChild>
+              <a href="#projects">View Projects</a>
             </Button>
           </div>
+        </motion.div>
 
-          <div className="flex flex-wrap items-center gap-2" data-testid="list-badges">
-            {badges.map((b) => (
-              <Badge
-                key={b}
-                variant="secondary"
-                className="rounded-full"
-                data-testid={`badge-${b.toLowerCase().replaceAll(" ", "-")}`}
-              >
-                <BadgeCheck className="mr-1 h-3.5 w-3.5" />
-                {b}
-              </Badge>
-            ))}
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`h-1.5 transition-all rounded-full ${
+                i === current ? "w-8 bg-accent" : "w-2 bg-white/40"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
 export default function HomePage() {
+  const { toast } = useToast();
+  const [filter, setFilter] = useState("All");
+
+  const filteredProjects = filter === "All"
+    ? projects
+    : projects.filter(p => p.category === filter);
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    toast({
+      title: "Request Sent",
+      description: "Our team will contact you within 24 hours.",
+    });
+    (e.currentTarget as HTMLFormElement).reset();
+  }
+
   return (
-    <div className="min-h-screen bg-background" data-testid="page-home">
-      <TopNav />
+    <div className="min-h-screen bg-background selection:bg-accent selection:text-accent-foreground" data-testid="page-landing">
+      {/* Navigation */}
+      <nav className="fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+        <div className="arp-container flex h-20 items-center justify-between">
+          <Link href="/">
+            <a className="transition-transform hover:scale-105">
+              <Logo />
+            </a>
+          </Link>
 
-      <main className="arp-grid-bg" data-testid="main-home">
-        <section className="arp-grain relative overflow-hidden" data-testid="section-hero">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url(${heroBg})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              opacity: 0.26,
-            }}
-            aria-hidden
-            data-testid="img-hero-bg"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, hsl(var(--background) / 0.6) 0%, hsl(var(--background)) 72%)",
-            }}
-            aria-hidden
-          />
-
-          <div className="arp-container relative py-14 sm:py-18 lg:py-20">
-            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="max-w-xl"
-                data-testid="hero-copy"
+          <div className="hidden items-center gap-8 lg:flex">
+            {nav.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-sm font-medium text-muted-foreground transition hover:text-accent"
               >
-                <div
-                  className="inline-flex items-center gap-2 rounded-full border bg-card/70 px-3 py-1.5 text-xs text-muted-foreground shadow-sm"
-                  data-testid="badge-hero"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  <span className="arp-kicker" data-testid="text-hero-kicker">
-                    Professional  b7 Trustworthy  b7 Premium
-                  </span>
+                {item.label}
+              </a>
+            ))}
+            <Button className="rounded-full bg-primary" asChild>
+              <a href="#contact">Contact Us</a>
+            </Button>
+          </div>
+        </div>
+      </nav>
+
+      <main>
+        <HeroSlider />
+
+        {/* Stats Section */}
+        <section className="bg-primary py-12 text-primary-foreground">
+          <div className="arp-container">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+              {stats.map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="arp-title text-4xl font-bold text-accent">{stat.value}</div>
+                  <div className="text-sm font-medium uppercase tracking-widest text-white/60">{stat.label}</div>
                 </div>
-
-                <h1
-                  className="arp-title mt-5 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl"
-                  data-testid="text-hero-headline"
-                >
-                  Crafting Quality Structures{" "}
-                  <span className="arp-underline" data-testid="text-hero-emphasis">
-                    That Stand the Test of Time
-                  </span>
-                </h1>
-
-                <p className="mt-4 text-base text-muted-foreground sm:text-lg" data-testid="text-hero-subheadline">
-                  Residential, Commercial & Renovation Experts You Can Trust.
-                </p>
-
-                <div className="mt-7 flex flex-col gap-3 sm:flex-row" data-testid="hero-actions">
-                  <Button
-                    className="arp-focus-ring rounded-xl"
-                    size="lg"
-                    asChild
-                    data-testid="button-hero-quote"
-                  >
-                    <Link href="/quote" data-testid="link-hero-quote">
-                      Get a Quote
-                    </Link>
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    className="arp-focus-ring rounded-xl"
-                    asChild
-                    data-testid="button-hero-projects"
-                  >
-                    <Link href="/projects" data-testid="link-hero-projects">
-                      <span className="flex items-center gap-2">
-                        View Projects <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </Link>
-                  </Button>
-                </div>
-
-                <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3" data-testid="grid-stats">
-                  {stats.map((s) => (
-                    <Stat key={s.label} label={s.label} value={s.value} />
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 22 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.08, ease: "easeOut" }}
-                data-testid="hero-form"
-              >
-                <QuoteInline />
-              </motion.div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="arp-container py-12 sm:py-14" data-testid="section-services">
-          <div className="flex items-end justify-between gap-6" data-testid="services-header">
-            <div className="max-w-xl">
-              <div className="arp-kicker text-xs text-muted-foreground" data-testid="text-services-kicker">
-                Services
-              </div>
-              <h2 className="arp-title mt-2 text-3xl font-semibold" data-testid="text-services-title">
-                Built to last. Managed to feel effortless.
-              </h2>
-              <p className="mt-2 text-muted-foreground" data-testid="text-services-subtitle">
-                Clear planning, clean workmanship, and a finish that reads premium  every time.
-              </p>
+        {/* Services Section */}
+        <section id="services" className="py-24">
+          <div className="arp-container">
+            <div className="mb-16 text-center">
+              <h2 className="arp-title mb-4 text-4xl font-bold">Our Expertise</h2>
+              <div className="mx-auto h-1 w-20 bg-accent" />
             </div>
-          </div>
 
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="grid-services">
-            {services.map((s) => {
-              const Icon = s.icon;
-              return (
-                <Card
-                  key={s.title}
-                  className="group rounded-3xl border bg-card/70 transition hover:-translate-y-0.5 hover:shadow-md"
-                  data-testid={`card-service-${s.title}`}
-                >
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {services.map((service) => (
+                <Card key={service.title} className="group overflow-hidden rounded-2xl border-none bg-secondary/50 transition-all hover:bg-secondary">
                   <CardHeader>
-                    <div
-                      className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl border bg-background shadow-sm"
-                      data-testid={`icon-${s.title}`}
-                    >
-                      <Icon className="h-5 w-5" strokeWidth={1.7} />
+                    <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent/20 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                      <service.icon className="h-6 w-6" />
                     </div>
-                    <CardTitle className="arp-title text-lg" data-testid={`text-service-title-${s.title}`}>
-                      {s.title}
-                    </CardTitle>
-                    <CardDescription data-testid={`text-service-desc-${s.title}`}>
-                      {s.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link
-                      href={s.href}
-                      data-testid={`link-service-${s.title}`}
-                      className="arp-focus-ring inline-flex items-center gap-2 rounded-lg text-sm font-medium"
-                    >
-                      Learn more <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                    </Link>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="arp-container py-12 sm:py-14" data-testid="section-how">
-          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <div data-testid="how-copy">
-              <div className="arp-kicker text-xs text-muted-foreground" data-testid="text-how-kicker">
-                How it works
-              </div>
-              <h2 className="arp-title mt-2 text-3xl font-semibold" data-testid="text-how-title">
-                A calm, predictable process.
-              </h2>
-              <p className="mt-2 text-muted-foreground" data-testid="text-how-subtitle">
-                We keep things transparent and proactive so your project moves forward with confidence.
-              </p>
-
-              <div className="mt-5 flex flex-wrap gap-2" data-testid="how-badges">
-                <Badge variant="secondary" className="rounded-full" data-testid="badge-process-communication">
-                  Transparent communication
-                </Badge>
-                <Badge variant="secondary" className="rounded-full" data-testid="badge-process-timelines">
-                  Clear timelines
-                </Badge>
-                <Badge variant="secondary" className="rounded-full" data-testid="badge-process-quality">
-                  Quality checks
-                </Badge>
-              </div>
-            </div>
-
-            <div className="grid gap-3" data-testid="how-steps">
-              {steps.map((st, idx) => (
-                <Card
-                  key={st.title}
-                  className="rounded-3xl border bg-card/70 shadow-sm"
-                  data-testid={`card-step-${idx + 1}`}
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between gap-4" data-testid={`row-step-${idx + 1}`}>
-                      <CardTitle className="arp-title text-lg" data-testid={`text-step-title-${idx + 1}`}>
-                        {idx + 1}. {st.title}
-                      </CardTitle>
-                      <Badge className="rounded-full" variant="secondary" data-testid={`badge-step-${idx + 1}`}>
-                        {st.title}
-                      </Badge>
-                    </div>
-                    <CardDescription data-testid={`text-step-desc-${idx + 1}`}>
-                      {st.description}
-                    </CardDescription>
+                    <CardTitle className="arp-title text-xl">{service.title}</CardTitle>
+                    <CardDescription>{service.description}</CardDescription>
                   </CardHeader>
                 </Card>
               ))}
@@ -679,263 +325,177 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="arp-container py-12 sm:py-14" data-testid="section-projects">
-          <div className="flex items-end justify-between gap-6" data-testid="projects-header">
-            <div className="max-w-xl">
-              <div className="arp-kicker text-xs text-muted-foreground" data-testid="text-projects-kicker">
-                Featured projects
+        {/* Projects Section */}
+        <section id="projects" className="bg-secondary/30 py-24">
+          <div className="arp-container">
+            <div className="mb-16 flex flex-col items-center justify-between gap-6 sm:flex-row">
+              <div className="text-center sm:text-left">
+                <h2 className="arp-title text-4xl font-bold">Latest Work</h2>
+                <p className="text-muted-foreground">Crafting excellence across every project.</p>
               </div>
-              <h2 className="arp-title mt-2 text-3xl font-semibold" data-testid="text-projects-title">
-                Proof in the details.
-              </h2>
-              <p className="mt-2 text-muted-foreground" data-testid="text-projects-subtitle">
-                A quick look at the kind of work we deliver across residential, renovation, and commercial.
-              </p>
-            </div>
-            <Button variant="secondary" className="hidden rounded-xl lg:inline-flex" asChild data-testid="button-projects-all">
-              <Link href="/projects" data-testid="link-projects-all">
-                View all
-              </Link>
-            </Button>
-          </div>
 
-          <div className="relative mt-7" data-testid="carousel-projects">
-            <Carousel opts={{ align: "start" }}>
-              <CarouselContent>
-                {featuredProjects.map((p) => (
-                  <CarouselItem key={p.id} className="md:basis-1/2 lg:basis-1/3" data-testid={`slide-project-${p.id}`}>
-                    <Card className="rounded-3xl border bg-card/70 shadow-sm" data-testid={`card-project-${p.id}`}>
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-4" data-testid={`row-project-${p.id}`}>
-                          <div>
-                            <CardTitle className="arp-title text-lg" data-testid={`text-project-title-${p.id}`}>
-                              {p.title}
-                            </CardTitle>
-                            <CardDescription className="mt-1 flex flex-wrap items-center gap-2" data-testid={`text-project-meta-${p.id}`}>
-                              <span className="inline-flex items-center gap-1">
-                                <MapPin className="h-3.5 w-3.5" /> {p.location}
-                              </span>
-                              <span className="text-muted-foreground/60">7</span>
-                              <span className="inline-flex items-center gap-1">
-                                <Hammer className="h-3.5 w-3.5" /> {p.category}
-                              </span>
-                            </CardDescription>
-                          </div>
-                          <Badge className="rounded-full" data-testid={`badge-project-${p.id}`}>
-                            {p.category}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground" data-testid={`text-project-desc-${p.id}`}>
-                          {p.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
+              <div className="flex flex-wrap justify-center gap-2">
+                {["All", "Development", "Plumbing", "Renovation"].map((f) => (
+                  <Button
+                    key={f}
+                    variant={filter === f ? "default" : "outline"}
+                    className="rounded-full"
+                    onClick={() => setFilter(f)}
+                  >
+                    {f}
+                  </Button>
                 ))}
-              </CarouselContent>
-              <CarouselPrevious data-testid="button-projects-prev" />
-              <CarouselNext data-testid="button-projects-next" />
-            </Carousel>
+              </div>
+            </div>
+
+            <motion.div
+              layout
+              className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredProjects.map((project) => (
+                  <motion.div
+                    key={project.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.4 }}
+                    className="group relative aspect-[4/3] overflow-hidden rounded-3xl"
+                  >
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                    <div className="absolute bottom-0 left-0 p-8 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="text-xs font-bold uppercase tracking-widest text-accent mb-2">{project.category}</div>
+                      <h3 className="arp-title text-2xl font-bold">{project.title}</h3>
+                      <div className="flex items-center gap-2 text-sm text-white/80 mt-2">
+                        <MapPin className="h-4 w-4" /> {project.location}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           </div>
         </section>
 
-        <section className="arp-container py-12 sm:py-14" data-testid="section-testimonials">
-          <div className="flex items-end justify-between gap-6" data-testid="testimonials-header">
-            <div className="max-w-xl">
-              <div className="arp-kicker text-xs text-muted-foreground" data-testid="text-testimonials-kicker">
-                Testimonials
-              </div>
-              <h2 className="arp-title mt-2 text-3xl font-semibold" data-testid="text-testimonials-title">
-                Trusted by clients who care about craft.
-              </h2>
-              <p className="mt-2 text-muted-foreground" data-testid="text-testimonials-subtitle">
-                The consistent theme: integrity, communication, and precision.
-              </p>
+        {/* Process Section */}
+        <section id="process" className="py-24">
+          <div className="arp-container text-center">
+            <h2 className="arp-title mb-16 text-4xl font-bold">Our Process</h2>
+            <div className="relative grid gap-12 lg:grid-cols-4">
+              {[
+                { title: "Consult", desc: "Understanding your vision" },
+                { title: "Plan", desc: "Detailed engineering" },
+                { title: "Build", desc: "Precision construction" },
+                { title: "Deliver", desc: "Excellence handed over" },
+              ].map((step, i) => (
+                <div key={i} className="relative z-10">
+                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-2xl font-bold text-accent-foreground shadow-lg shadow-accent/20">
+                    {i + 1}
+                  </div>
+                  <h3 className="arp-title text-xl font-bold mb-2">{step.title}</h3>
+                  <p className="text-muted-foreground">{step.desc}</p>
+                </div>
+              ))}
+              <div className="absolute top-8 left-0 hidden h-0.5 w-full bg-secondary lg:block" aria-hidden />
             </div>
           </div>
+        </section>
 
-          <div className="mt-7 grid gap-4 lg:grid-cols-3" data-testid="grid-testimonials">
-            {testimonials.map((t) => (
-              <Card key={t.id} className="rounded-3xl border bg-card/70 shadow-sm" data-testid={`card-testimonial-${t.id}`}>
-                <CardHeader>
-                  <div className="flex items-center justify-between gap-3" data-testid={`row-testimonial-${t.id}`}>
-                    <div>
-                      <CardTitle className="arp-title text-lg" data-testid={`text-testimonial-name-${t.id}`}>
-                        {t.name}
-                      </CardTitle>
-                      <CardDescription data-testid={`text-testimonial-type-${t.id}`}>
-                        {t.type}
-                      </CardDescription>
+        {/* Contact/Quote Section */}
+        <section id="contact" className="py-24 bg-primary text-primary-foreground">
+          <div className="arp-container">
+            <div className="grid gap-16 lg:grid-cols-2">
+              <div>
+                <h2 className="arp-title mb-6 text-5xl font-bold">Ready to start your journey?</h2>
+                <p className="mb-12 text-lg text-white/60">
+                  Whether it's a major development or a plumbing emergency, our team is ready to bring precision and integrity to your door.
+                </p>
+
+                <div className="grid gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-accent">
+                      <Phone className="h-6 w-6" />
                     </div>
-                    <Stars rating={t.rating} />
+                    <div>
+                      <div className="text-sm text-white/60">Call Us Anytime</div>
+                      <div className="text-xl font-bold">+1 (555) 000-0000</div>
+                    </div>
                   </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-accent">
+                      <Mail className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-white/60">Email Support</div>
+                      <div className="text-xl font-bold">hello@arpconstruction.com</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Card className="rounded-[2.5rem] border-none bg-white p-2 shadow-2xl">
+                <CardHeader className="text-center pt-8">
+                  <CardTitle className="arp-title text-3xl text-primary">Get a Free Quote</CardTitle>
+                  <CardDescription>We typically respond in under 2 hours.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground" data-testid={`text-testimonial-review-${t.id}`}>
-                    c{t.review}d
-                  </p>
+                  <form onSubmit={onSubmit} className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name" className="text-primary">Full Name</Label>
+                      <Input id="name" placeholder="John Doe" required className="rounded-xl border-secondary" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="email" className="text-primary">Email</Label>
+                        <Input id="email" type="email" placeholder="john@example.com" required className="rounded-xl border-secondary" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-primary">Service</Label>
+                        <Select required>
+                          <SelectTrigger className="rounded-xl border-secondary">
+                            <SelectValue placeholder="Select service" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="dev">Home Development</SelectItem>
+                            <SelectItem value="plumbing">Plumbing</SelectItem>
+                            <SelectItem value="reno">Renovation</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="message" className="text-primary">Project Details</Label>
+                      <Textarea id="message" placeholder="Tell us about your project..." className="min-h-[120px] rounded-xl border-secondary" />
+                    </div>
+                    <Button type="submit" size="lg" className="rounded-xl bg-accent text-accent-foreground hover:bg-accent/90">
+                      Send Quote Request
+                    </Button>
+                  </form>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </section>
-
-        <section className="arp-container py-12 sm:py-14" data-testid="section-faq">
-          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <div data-testid="faq-copy">
-              <div className="arp-kicker text-xs text-muted-foreground" data-testid="text-faq-kicker">
-                FAQs
-              </div>
-              <h2 className="arp-title mt-2 text-3xl font-semibold" data-testid="text-faq-title">
-                Quick answers.
-              </h2>
-              <p className="mt-2 text-muted-foreground" data-testid="text-faq-subtitle">
-                If you have a unique scenario, reach out and well guide you.
-              </p>
-            </div>
-
-            <Card className="rounded-3xl border bg-card/70 shadow-sm" data-testid="card-faq">
-              <CardContent className="pt-6">
-                <Accordion type="single" collapsible data-testid="accordion-faq">
-                  {faqs.map((f, idx) => (
-                    <AccordionItem key={f.q} value={`item-${idx}`} data-testid={`faq-item-${idx}`}>
-                      <AccordionTrigger className="text-left" data-testid={`faq-trigger-${idx}`}>
-                        {f.q}
-                      </AccordionTrigger>
-                      <AccordionContent data-testid={`faq-content-${idx}`}>
-                        {f.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        <section className="arp-container pb-16" data-testid="section-final-cta">
-          <div className="arp-grain rounded-3xl border bg-card/70 p-8 shadow-sm sm:p-10" data-testid="card-final-cta">
-            <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center" data-testid="row-final-cta">
-              <div>
-                <div className="arp-kicker text-xs text-muted-foreground" data-testid="text-final-kicker">
-                  Ready to start?
-                </div>
-                <h3 className="arp-title mt-2 text-2xl font-semibold" data-testid="text-final-title">
-                  Ready to Start Your Project?
-                </h3>
-                <p className="mt-2 text-muted-foreground" data-testid="text-final-subtitle">
-                  Request a free consultation and get a clear plan, timeline, and budget range.
-                </p>
-              </div>
-
-              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row" data-testid="final-actions">
-                <Button className="rounded-xl" asChild data-testid="button-final-quote">
-                  <Link href="/quote" data-testid="link-final-quote">
-                    Request a Free Consultation
-                  </Link>
-                </Button>
-                <Button variant="secondary" className="rounded-xl" asChild data-testid="button-final-contact">
-                  <Link href="/contact" data-testid="link-final-contact">
-                    Contact
-                  </Link>
-                </Button>
-              </div>
-            </div>
-
-            <div className="mt-7 grid gap-3 border-t pt-6 sm:grid-cols-3" data-testid="grid-contact-mini">
-              <div className="flex items-center gap-3" data-testid="contact-mini-phone">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl border bg-background shadow-sm" aria-hidden>
-                  <Phone className="h-4.5 w-4.5" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium" data-testid="text-phone-label">Phone</div>
-                  <div className="text-sm text-muted-foreground" data-testid="text-phone-value">+1-XXX-XXX-XXXX</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3" data-testid="contact-mini-email">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl border bg-background shadow-sm" aria-hidden>
-                  <Mail className="h-4.5 w-4.5" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium" data-testid="text-email-label">Email</div>
-                  <div className="text-sm text-muted-foreground" data-testid="text-email-value">info@arpconstructions.com</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3" data-testid="contact-mini-address">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl border bg-background shadow-sm" aria-hidden>
-                  <MapPin className="h-4.5 w-4.5" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium" data-testid="text-hours-label">Office hours</div>
-                  <div className="text-sm text-muted-foreground" data-testid="text-hours-value">MonFri, 9am5pm</div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
-
-        <footer className="border-t bg-background" data-testid="footer">
-          <div className="arp-container py-10">
-            <div className="grid gap-8 lg:grid-cols-3" data-testid="footer-grid">
-              <div data-testid="footer-brand">
-                <Logo />
-                <p className="mt-3 max-w-sm text-sm text-muted-foreground" data-testid="text-footer-desc">
-                  ARP Constructions delivers premium residential, renovation, and commercial work with a focus on integrity,
-                  precision, and long-term value.
-                </p>
-              </div>
-
-              <div className="grid gap-2" data-testid="footer-links">
-                <div className="text-sm font-medium" data-testid="text-footer-links-title">Explore</div>
-                <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                  {nav.slice(1, 7).map((n) => (
-                    <Link
-                      key={n.href}
-                      href={n.href}
-                      data-testid={`link-footer-${n.label.toLowerCase().replaceAll(" ", "-")}`}
-                      className="arp-focus-ring rounded-lg hover:text-foreground"
-                    >
-                      {n.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-3" data-testid="footer-contact">
-                <div className="text-sm font-medium" data-testid="text-footer-contact-title">Contact</div>
-                <div className="grid gap-2 text-sm text-muted-foreground" data-testid="footer-contact-list">
-                  <div className="inline-flex items-center gap-2" data-testid="footer-phone">
-                    <Phone className="h-4 w-4" /> <span>+1-XXX-XXX-XXXX</span>
-                  </div>
-                  <div className="inline-flex items-center gap-2" data-testid="footer-email">
-                    <Mail className="h-4 w-4" /> <span>info@arpconstructions.com</span>
-                  </div>
-                  <div className="inline-flex items-center gap-2" data-testid="footer-location">
-                    <MapPin className="h-4 w-4" /> <span>MonFri, 9am5pm</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="mt-10 flex flex-col justify-between gap-3 border-t pt-6 text-sm text-muted-foreground sm:flex-row"
-              data-testid="footer-bottom"
-            >
-              <div data-testid="text-copyright">© {new Date().getFullYear()} ARP Constructions. All rights reserved.</div>
-              <div className="inline-flex items-center gap-2" data-testid="footer-note">
-                <Badge variant="secondary" className="rounded-full" data-testid="badge-footer-licensed">
-                  Licensed
-                </Badge>
-                <Badge variant="secondary" className="rounded-full" data-testid="badge-footer-insured">
-                  Insured
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </footer>
       </main>
+
+      <footer className="border-t py-12">
+        <div className="arp-container flex flex-col items-center justify-between gap-6 sm:flex-row">
+          <Logo />
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Arp Construction. Built with Integrity.
+          </p>
+          <div className="flex gap-4">
+            <Badge variant="outline" className="rounded-full">Licensed</Badge>
+            <Badge variant="outline" className="rounded-full">Insured</Badge>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
