@@ -227,13 +227,13 @@ export default function HomePage() {
   return (
     <div className="noise-bg min-h-screen">
       {/* FAQ Assistant Button */}
-      <div className="fixed bottom-28 md:bottom-8 right-6 md:right-8 z-[110]">
+      <div className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-[110]">
         <Button 
           onClick={() => setIsFAQOpen(true)}
-          className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden"
+          className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden border border-white/20"
         >
           <span className="absolute inset-0 bg-gradient-to-tr from-accent to-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Sparkles className="h-6 w-6 md:h-8 md:w-8 relative z-10" />
+          <Sparkles className="h-6 w-6 md:h-8 md:w-8 relative z-10 text-white" />
         </Button>
       </div>
 
@@ -490,7 +490,7 @@ export default function HomePage() {
                       ))}
                     </div>
                     
-                    <div className="mt-12 p-8 rounded-[2rem] bg-accent text-accent-foreground text-center">
+                    <div className="mt-12 p-8 rounded-[2rem] bg-accent text-accent-foreground text-center pb-24 md:pb-8">
                       <h4 className="text-xl font-bold mb-2">Need something else?</h4>
                       <p className="opacity-90 mb-6">No job is too small for our expert team.</p>
                       <DialogTrigger asChild>
