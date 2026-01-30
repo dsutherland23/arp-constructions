@@ -102,7 +102,7 @@ const detailedServices = [
   {
     title: "Plumbing Handyman Services",
     icon: Droplets,
-    items: ["Fixing clogged shower drain", "Replacing tub/shower faucet", "Fixing leaky faucet", "Installing a garbage disposal", "Repair or replace a toilet", "Fixing leaking outdoor spigot", "Fixing leaking shower head", "Plus lots more!"]
+    items: ["Fixing clogged shower drain", "Replacing tub/shower faucet", "Fixing leaky faucet", "Installing a garbage disposal", "Repair or replace a toilet", "Fixing leaking outdoor spigot", "Fixing leaking shower head", "and a lot more!"]
   },
   {
     title: "General Home Maintenance",
@@ -122,7 +122,7 @@ const detailedServices = [
   {
     title: "Drywall",
     icon: Layers,
-    items: ["Minor drywall repair", "Patching holes", "Fix sheetrock", "Seal and touch up cracks", "Apply textured finishes", "Fix ceiling drywall", "Fix and retape corner cracks"]
+    items: ["Minor drywall repair", "Patching holes", "Fix sheetrock", "Seal and touch up cracks", "Apply textured finishes", "Fix ceiling drywall", "Fix and retape corner cracks", "and a lot more!"]
   },
   {
     title: "TVs, Artwork, and Shelving",
