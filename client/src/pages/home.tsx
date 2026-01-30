@@ -809,19 +809,56 @@ export default function HomePage() {
                       </div>
                       <div className="grid gap-4 text-left">
                         <div className="grid gap-2">
-                          <Label htmlFor="name">Full Name</Label>
-                          <Input id="name" placeholder="John Doe" value={formData.name} onChange={handleInputChange} required className="h-12 rounded-xl bg-background/50" />
+                          <Label htmlFor="waitlist-name">Full Name</Label>
+                          <Input 
+                            id="name" 
+                            placeholder="John Doe" 
+                            value={formData.name} 
+                            onChange={handleInputChange} 
+                            required 
+                            className="h-12 rounded-xl bg-background/50" 
+                          />
                         </div>
                         <div className="grid gap-2">
-                          <Label htmlFor="email">Email</Label>
-                          <Input id="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleInputChange} required className="h-12 rounded-xl bg-background/50" />
+                          <Label htmlFor="waitlist-email">Email</Label>
+                          <Input 
+                            id="email" 
+                            type="email" 
+                            placeholder="john@example.com" 
+                            value={formData.email} 
+                            onChange={handleInputChange} 
+                            required 
+                            className="h-12 rounded-xl bg-background/50" 
+                          />
                         </div>
                         <div className="grid gap-2">
-                          <Label htmlFor="phone">Phone</Label>
-                          <Input id="phone" type="tel" placeholder="Phone Number" value={formData.phone} onChange={handleInputChange} required className="h-12 rounded-xl bg-background/50" />
+                          <Label htmlFor="waitlist-phone">Phone</Label>
+                          <Input 
+                            id="phone" 
+                            type="tel" 
+                            placeholder="Phone Number" 
+                            value={formData.phone} 
+                            onChange={handleInputChange} 
+                            required 
+                            className="h-12 rounded-xl bg-background/50" 
+                          />
                         </div>
                       </div>
-                      <Button onClick={() => setFormStep(2)} className="h-14 rounded-xl bg-accent font-bold">
+                      <Button 
+                        type="button"
+                        onClick={() => {
+                          if (formData.name && formData.email && formData.phone) {
+                            setFormStep(2);
+                          } else {
+                            toast({
+                              title: "Missing Information",
+                              description: "Please fill in all fields to join the waitlist.",
+                              variant: "destructive"
+                            });
+                          }
+                        }} 
+                        className="h-14 rounded-xl bg-accent font-bold"
+                      >
                         Join Waitlist
                       </Button>
                     </motion.div>
