@@ -166,11 +166,11 @@ export default function HomePage() {
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
 
   const faqs = [
-    { q: "What areas do you serve?", a: "We primarily serve the greater Charlotte area and surrounding communities.", action: "Contact", link: "#contact" },
-    { q: "Are you licensed and insured?", a: "Yes, we are fully licensed and maintain platinum-level insurance for your peace of mind.", action: "View Services", link: "#services" },
+    { q: "What areas do you serve?", a: "We primarily serve New York and surrounding areas.", action: "Contact", link: "#contact" },
     { q: "How do I get a quote?", a: "You can initiate a consultation through our contact form or by calling us directly.", action: "Get Started", link: "#contact" },
     { q: "Do you handle small repairs?", a: "Absolutely. No job is too small for our expert team, from leaky faucets to shelf mounting.", action: "See Capabilities", link: "#services" },
-    { q: "What is your typical timeline?", a: "Timelines vary by project size, but we provide a detailed schedule during the strategy phase.", action: "Our Process", link: "#process" }
+    { q: "What is your typical timeline?", a: "Timelines vary by project size, but we provide a detailed schedule during the strategy phase.", action: "Our Process", link: "#process" },
+    { q: "Tell me about ARP Construction", a: "ARP Construction is a premier New York-based renovation firm. We specialize in high-end plumbing, kitchens, and bathrooms, bringing architectural precision to every project.", action: "Learn More", link: "#process" }
   ];
 
   const handleFormSubmit = (e: React.FormEvent) => {
