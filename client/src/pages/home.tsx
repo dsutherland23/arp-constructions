@@ -227,7 +227,7 @@ export default function HomePage() {
   return (
     <div className="noise-bg min-h-screen">
       {/* FAQ Assistant Button */}
-      <div className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-[150]">
+      <div className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-[150] landscape:bottom-6">
         <Button 
           onClick={() => setIsFAQOpen(true)}
           className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden border border-white/20"
@@ -238,7 +238,7 @@ export default function HomePage() {
       </div>
 
       {/* Mobile App-Style Footer Menu */}
-      <div className="fixed bottom-0 left-0 z-[120] w-full md:hidden transition-transform duration-300" style={{ transform: isMobileMenuOpen ? 'translateY(100%)' : 'translateY(0)' }}>
+      <div className="fixed bottom-0 left-0 z-[120] w-full md:hidden transition-transform duration-300 landscape:hidden" style={{ transform: isMobileMenuOpen ? 'translateY(100%)' : 'translateY(0)' }}>
         <div className="mx-4 mb-4 glass-card shadow-[0_-10px_40px_rgba(0,0,0,0.3)] rounded-[2.5rem] flex items-center justify-around py-4 px-2 border border-white/20 backdrop-blur-2xl ring-1 ring-white/10">
           {mobileNav.map((item) => (
             <button 
@@ -327,14 +327,14 @@ export default function HomePage() {
       </Dialog>
 
       {/* Navigation */}
-      <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"}`}>
+      <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"} landscape:py-2`}>
         <div className="container mx-auto px-4 md:px-6">
-          <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"}`}>
+          <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"} landscape:glass-card landscape:rounded-full landscape:px-4 landscape:py-1`}>
             <div className="flex items-center">
-              <img src={logoImg} alt="Arp" className="h-14 md:h-20 w-auto transition-all duration-500 object-contain" />
+              <img src={logoImg} alt="Arp" className="h-14 md:h-20 w-auto transition-all duration-500 object-contain landscape:h-12" />
             </div>
             
-            <div className="hidden items-center gap-6 lg:flex ml-auto">
+            <div className="hidden items-center gap-6 lg:flex ml-auto landscape:hidden">
               {navItems.map((item) => (
                 <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-semibold tracking-tight text-primary hover:text-accent transition-all duration-300">
                   {item}
