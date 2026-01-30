@@ -238,7 +238,7 @@ export default function HomePage() {
       </div>
 
       {/* Mobile App-Style Footer Menu */}
-      <div className="fixed bottom-0 left-0 z-[120] w-full md:hidden">
+      <div className="fixed bottom-0 left-0 z-[120] w-full md:hidden transition-transform duration-300" style={{ transform: isMobileMenuOpen ? 'translateY(100%)' : 'translateY(0)' }}>
         <div className="mx-4 mb-4 glass-card shadow-[0_-10px_40px_rgba(0,0,0,0.2)] rounded-2xl flex items-center justify-around py-3 px-2 border border-white/10 backdrop-blur-xl">
           {mobileNav.map((item) => (
             <a 
