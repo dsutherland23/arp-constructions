@@ -373,9 +373,53 @@ export default function HomePage() {
         <div className="container mx-auto mb-12 md:mb-20 px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">Visual Proof</h2>
-            <Button variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10 w-fit">
-              View All Case Studies
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10 w-fit">
+                  View All Case Studies
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto rounded-[2rem] border-none glass-card p-0 z-[101]">
+                <div className="p-6 md:p-12 pt-16 md:pt-12">
+                  <DialogHeader className="mb-12">
+                    <DialogTitle className="text-4xl font-bold tracking-tight text-gradient">Project Portfolio</DialogTitle>
+                    <p className="text-muted-foreground mt-2">A detailed look at our latest transformations and craftsmanship.</p>
+                  </DialogHeader>
+                  
+                  <div className="grid gap-8 sm:grid-cols-2">
+                    {projects.map((project, i) => (
+                      <div key={i} className="group space-y-4">
+                        <div className="aspect-video overflow-hidden rounded-3xl bg-secondary/30 relative">
+                          <img 
+                            src={project.image} 
+                            alt={project.title}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute top-4 left-4">
+                            <Badge className="bg-accent text-white">{project.category}</Badge>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-bold">{project.title}</h4>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            Complete transformation focusing on modern aesthetics and high-end materials. This project showcases our commitment to precision and style.
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-12 p-8 rounded-[2rem] bg-secondary/30 border border-border/50 text-center">
+                    <h4 className="text-xl font-bold mb-4">Ready to start your own transformation?</h4>
+                    <DialogTrigger asChild>
+                      <a href="#contact">
+                        <Button className="rounded-full px-8 bg-accent hover:bg-primary">Get a Quote</Button>
+                      </a>
+                    </DialogTrigger>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
