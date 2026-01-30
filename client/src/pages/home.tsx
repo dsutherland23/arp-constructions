@@ -227,7 +227,7 @@ export default function HomePage() {
   return (
     <div className="noise-bg min-h-screen">
       {/* FAQ Assistant Button */}
-      <div className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-[110]">
+      <div className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-[150]">
         <Button 
           onClick={() => setIsFAQOpen(true)}
           className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden border border-white/20"
