@@ -18,7 +18,13 @@ import {
   MapPin,
   Sparkles,
   Download,
-  QrCode
+  QrCode,
+  CheckCircle2,
+  Wrench,
+  Layers,
+  Layout,
+  Tv,
+  Table
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -89,6 +95,44 @@ const services = [
     icon: Building2,
     description: "Complete interior overhauls that redefine your living space, from structural changes to fine finishing.",
     color: "bg-indigo-500/10 text-indigo-600"
+  }
+];
+
+const detailedServices = [
+  {
+    title: "Plumbing Handyman Services",
+    icon: Droplets,
+    items: ["Fixing clogged shower drain", "Replacing tub/shower faucet", "Fixing leaky faucet", "Installing a garbage disposal", "Repair or replace a toilet", "Fixing leaking outdoor spigot", "Fixing leaking shower head", "Plus lots more!"]
+  },
+  {
+    title: "General Home Maintenance",
+    icon: Wrench,
+    items: ["Minor appliance maintenance", "Replace HVAC air filter", "Replace smoke detector batteries", "Interior + exterior caulking", "First story gutter inspection", "Sump pump inspection", "Paint touch-ups", "Weatherstripping", "Deck and patio maintenance", "Power washing", "Child and pet safety checks"]
+  },
+  {
+    title: "Blinds and Window Treatments",
+    icon: Layout,
+    items: ["Install curtain rods", "Install blinds", "Hang curtains", "Fitting blinds and curtains", "Lubricate tracks and rods", "Replace slats or panels", "Tighten and adjust hardware", "Dusting and wipe down"]
+  },
+  {
+    title: "Doors and Windows",
+    icon: Building2,
+    items: ["Door and window frame repair", "Installation of new door hardware", "Door knob repair and replacement", "Weatherstripping replacement", "Caulking and sealing", "Hinge lubrication", "Lock replacement or repair", "Screen repair or replacement", "Pre-hung door installation"]
+  },
+  {
+    title: "Drywall",
+    icon: Layers,
+    items: ["Minor drywall repair", "Patching holes", "Fix sheetrock", "Seal and touch up cracks", "Apply textured finishes", "Fix ceiling drywall", "Fix and retape corner cracks"]
+  },
+  {
+    title: "TVs, Artwork, and Shelving",
+    icon: Tv,
+    items: ["Mounting flatscreen TV", "Mounting picture frames", "Hanging artwork or paintings", "Hanging mirrors", "Installing shelves", "Mounting floating shelves", "Installing towel racks", "Mounting bike racks", "Installing garage organization systems"]
+  },
+  {
+    title: "Furniture Assembly and Repairs",
+    icon: Table,
+    items: ["Assembling flat-pack furniture", "Bedroom furniture assembly", "Office furniture assembly", "Outdoor furniture assembly", "Repairing loose or broken furniture", "Fixing wobbly chairs or tables", "Replacing broken drawer slides", "Anchoring furniture"]
   }
 ];
 
@@ -253,23 +297,63 @@ export default function HomePage() {
           
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className="group relative overflow-hidden rounded-[2rem] bg-card p-8 md:p-10 transition-all hover:bg-secondary/50"
-              >
-                <div className={`mb-6 md:mb-8 inline-flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl ${service.color}`}>
-                  <service.icon className="h-6 w-6 md:h-8 md:w-8" />
-                </div>
-                <h3 className="mb-3 md:mb-4 text-xl md:text-2xl font-bold">{service.title}</h3>
-                <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{service.description}</p>
-                <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 opacity-0 transition-opacity group-hover:opacity-100">
-                  <ChevronRight className="h-6 w-6 text-accent" />
-                </div>
-              </motion.div>
+              <Dialog key={i}>
+                <DialogTrigger asChild>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    viewport={{ once: true }}
+                    className="group relative overflow-hidden rounded-[2rem] bg-card p-8 md:p-10 transition-all hover:bg-secondary/50 cursor-pointer"
+                  >
+                    <div className={`mb-6 md:mb-8 inline-flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-2xl ${service.color}`}>
+                      <service.icon className="h-6 w-6 md:h-8 md:w-8" />
+                    </div>
+                    <h3 className="mb-3 md:mb-4 text-xl md:text-2xl font-bold">{service.title}</h3>
+                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{service.description}</p>
+                    <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-2 text-accent font-medium text-sm">
+                      View Details <ChevronRight className="h-4 w-4" />
+                    </div>
+                  </motion.div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2rem] border-none glass-card p-0">
+                  <div className="p-8 md:p-12">
+                    <DialogHeader className="mb-12">
+                      <DialogTitle className="text-4xl font-bold tracking-tight text-gradient">Full Service Catalog</DialogTitle>
+                      <p className="text-muted-foreground mt-2">Professional solutions for every corner of your home.</p>
+                    </DialogHeader>
+                    
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      {detailedServices.map((detailed, idx) => (
+                        <div key={idx} className="space-y-4 p-6 rounded-3xl bg-secondary/30 border border-border/50">
+                          <div className="flex items-center gap-3 text-accent">
+                            <detailed.icon className="h-6 w-6" />
+                            <h4 className="font-bold text-lg leading-tight">{detailed.title}</h4>
+                          </div>
+                          <ul className="space-y-2">
+                            {detailed.items.map((item, itemIdx) => (
+                              <li key={itemIdx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                <CheckCircle2 className="h-4 w-4 mt-0.5 text-accent/60 shrink-0" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-12 p-8 rounded-[2rem] bg-accent text-accent-foreground text-center">
+                      <h4 className="text-xl font-bold mb-2">Need something else?</h4>
+                      <p className="opacity-90 mb-6">No job is too small for our expert team.</p>
+                      <DialogTrigger asChild>
+                        <a href="#contact">
+                          <Button variant="secondary" className="rounded-full px-8">Contact Us Now</Button>
+                        </a>
+                      </DialogTrigger>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             ))}
           </div>
         </div>
