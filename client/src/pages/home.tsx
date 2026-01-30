@@ -825,9 +825,19 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col items-center lg:items-end gap-6">
-              <div className="flex gap-3">
-                <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent">Licensed 2026</Badge>
-                <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent">Insured Platinum</Badge>
+              <div className="flex flex-wrap justify-center lg:justify-end gap-3">
+                <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent flex items-center gap-1.5 px-3 py-1">
+                  <Sparkles className="h-3 w-3" />
+                  Known for Neatness
+                </Badge>
+                <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent flex items-center gap-1.5 px-3 py-1">
+                  <Timer className="h-3 w-3" />
+                  Quick Turnaround
+                </Badge>
+                <Badge variant="outline" className="rounded-full border-accent/20 bg-accent/5 text-accent flex items-center gap-1.5 px-3 py-1">
+                  <ShieldCheck className="h-3 w-3" />
+                  100% Recommended
+                </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
                 © {new Date().getFullYear()} Arp Construction. Designed for Excellence.
