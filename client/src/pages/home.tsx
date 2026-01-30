@@ -188,7 +188,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"}`}>
             <div className="flex items-center">
-              <img src={logoImg} alt="Arp" className="h-16 md:h-28 w-auto transition-all duration-500" />
+              <img src={logoImg} alt="Arp" className="h-20 md:h-40 w-auto transition-all duration-500" />
             </div>
             
             {/* Desktop Nav */}
@@ -492,7 +492,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-between gap-10 lg:flex-row lg:items-start">
             <div className="flex flex-col items-center lg:items-start">
-              <img src={logoImg} alt="Arp" className="h-24 md:h-32 w-auto mb-6" />
+              <img src={logoImg} alt="Arp" className="h-32 md:h-48 w-auto mb-6" />
               <p className="text-muted-foreground max-w-xs text-center lg:text-left">
                 Setting the standard for architectural precision and modern living in 2026.
               </p>
