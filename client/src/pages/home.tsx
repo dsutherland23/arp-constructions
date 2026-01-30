@@ -214,6 +214,21 @@ export default function HomePage() {
 
   const [isFAQOpen, setIsFAQOpen] = useState(false);
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
+  const [chatStep, setChatStep] = useState(0);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatLead, setChatLead] = useState({ name: "", phone: "", email: "", desc: "" });
+
+  const handleLiveChat = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (window.navigator.vibrate) window.navigator.vibrate(10);
+    setChatStep(1);
+    if (!adminAvailable) {
+      toast({
+        title: "Admin Unavailable",
+        description: "We'll get back to you shortly via the provided contact info.",
+      });
+    }
+  };
 
   const faqs = [
     { q: "What areas do you serve?", a: "We primarily serve New York and surrounding areas.", action: "Contact", link: "#contact" },
@@ -392,13 +407,97 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-border/50">
+            <div className="mt-8 pt-6 border-t border-border/50 space-y-3">
+              <p className="text-xs text-muted-foreground text-center mb-1 italic">Ready to transform your space?</p>
+              
+              <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20 flex items-center justify-center gap-2 text-white">
+                    <Mail className="h-5 w-5" />
+                    Start Live Chat
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none glass-card p-0 z-[130]">
+                  <div className="p-8">
+                    <DialogHeader className="mb-6">
+                      <DialogTitle className="text-2xl font-bold">Live Chat</DialogTitle>
+                    </DialogHeader>
+                    
+                    {chatStep === 0 ? (
+                      <form onSubmit={handleLiveChat} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label>Name</Label>
+                          <Input 
+                            value={chatLead.name}
+                            onChange={(e) => setChatLead(p => ({ ...p, name: e.target.value }))}
+                            required className="rounded-xl bg-background/50" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Telephone</Label>
+                          <Input 
+                            type="tel"
+                            value={chatLead.phone}
+                            onChange={(e) => setChatLead(p => ({ ...p, phone: e.target.value }))}
+                            required className="rounded-xl bg-background/50" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Email</Label>
+                          <Input 
+                            type="email"
+                            value={chatLead.email}
+                            onChange={(e) => setChatLead(p => ({ ...p, email: e.target.value }))}
+                            required className="rounded-xl bg-background/50" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Short Synopsis</Label>
+                          <Textarea 
+                            value={chatLead.desc}
+                            onChange={(e) => setChatLead(p => ({ ...p, desc: e.target.value }))}
+                            required className="rounded-xl min-h-[80px] bg-background/50" 
+                          />
+                        </div>
+                        <Button type="submit" className="w-full h-12 rounded-xl bg-accent font-bold text-white shadow-lg shadow-accent/20">
+                          Check Availability
+                        </Button>
+                      </form>
+                    ) : (
+                      <div className="py-8 text-center space-y-4">
+                        <div className={`h-16 w-16 rounded-full flex items-center justify-center mx-auto ${adminAvailable ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"}`}>
+                          {adminAvailable ? <CheckCircle2 className="h-8 w-8" /> : <X className="h-8 w-8" />}
+                        </div>
+                        <h3 className="text-xl font-bold">
+                          {adminAvailable ? "Admin Connected" : "Admin Unavailable"}
+                        </h3>
+                        <p className="text-muted-foreground text-sm">
+                          {adminAvailable 
+                            ? "Connecting you to a live representative now..." 
+                            : "We're currently assisting other clients. We will get in contact with you shortly!"}
+                        </p>
+                        <Button 
+                          onClick={() => {
+                            setChatStep(0);
+                            setIsChatOpen(false);
+                          }} 
+                          variant="outline" 
+                          className="rounded-xl w-full h-12"
+                        >
+                          Close
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+
               <Button 
                 onClick={() => {
                   setIsFAQOpen(false);
                   window.location.href = "#contact";
                 }}
-                className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20"
+                className="w-full h-14 rounded-2xl bg-secondary hover:bg-secondary/80 font-bold border border-border/50"
               >
                 Initiate Consultation
               </Button>
