@@ -42,7 +42,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 // Assets
-import logoImg from "@assets/ARP_logo_2_1769746198034.png";
+import logoImg from "@assets/ARP_logo_2_1769747624981.png";
 import renoImg from "@/assets/images/project-reno-1.png";
 import plumbingImg from "@/assets/images/project-plumbing-1.png";
 import bathroomImg from "@/assets/images/project-bathroom.png";
@@ -227,7 +227,7 @@ export default function HomePage() {
   return (
     <div className="noise-bg min-h-screen">
       {/* FAQ Assistant Button */}
-      <div className="fixed bottom-24 md:bottom-8 right-6 md:right-8 z-[110]">
+      <div className="fixed bottom-28 md:bottom-8 right-6 md:right-8 z-[110]">
         <Button 
           onClick={() => setIsFAQOpen(true)}
           className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden"
@@ -738,7 +738,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-12 md:py-20">
+      <footer className="border-t py-12 md:py-20 mb-20 md:mb-0">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-between gap-10 lg:flex-row lg:items-start">
             <div className="flex flex-col items-center lg:items-start">
