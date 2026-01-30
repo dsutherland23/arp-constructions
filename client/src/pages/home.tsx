@@ -141,6 +141,36 @@ export default function HomePage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [logoClicks, setLogoClicks] = useState(0);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [adminAuth, setAdminAuth] = useState({ user: "", pass: "" });
+  const [adminAvailable, setAdminAvailable] = useState(true);
+
+  const handleLogoClick = () => {
+    setLogoClicks(prev => {
+      const newVal = prev + 1;
+      if (newVal >= 5) {
+        setIsAdminOpen(true);
+        return 0;
+      }
+      return newVal;
+    });
+    // Reset clicks after 2 seconds
+    const timer = setTimeout(() => setLogoClicks(0), 2000);
+    return () => clearTimeout(timer);
+  };
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (adminAuth.user === "Admin" && adminAuth.pass === "RicardoPecco") {
+      setIsLoggedIn(true);
+      toast({ title: "Welcome back, Ricardo." });
+    } else {
+      toast({ title: "Access Denied", variant: "destructive" });
+    }
+  };
+
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -184,26 +214,6 @@ export default function HomePage() {
 
   const [isFAQOpen, setIsFAQOpen] = useState(false);
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
-
-  const [chatStep, setChatStep] = useState(0); // 0: input, 1: status
-  const [isAdminAvailable, setIsAdminAvailable] = useState(false);
-
-  const handleLiveChat = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (window.navigator.vibrate) window.navigator.vibrate(10);
-    
-    // Simulate admin availability check
-    const available = Math.random() > 0.5;
-    setIsAdminAvailable(available);
-    setChatStep(1);
-    
-    if (!available) {
-      toast({
-        title: "Admin Unavailable",
-        description: "We'll get back to you shortly via the provided contact info.",
-      });
-    }
-  };
 
   const faqs = [
     { q: "What areas do you serve?", a: "We primarily serve New York and surrounding areas.", action: "Contact", link: "#contact" },
@@ -382,77 +392,12 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-border/50 space-y-3">
-              <p className="text-xs text-muted-foreground text-center mb-1 italic">Ready to transform your space?</p>
-              
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20 flex items-center justify-center gap-2">
-                    <Mail className="h-5 w-5" />
-                    Start Live Chat
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none glass-card p-0 z-[130]">
-                  <div className="p-8">
-                    <DialogHeader className="mb-6">
-                      <DialogTitle className="text-2xl font-bold">Live Chat</DialogTitle>
-                    </DialogHeader>
-                    
-                    {chatStep === 0 ? (
-                      <form onSubmit={handleLiveChat} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="chat-name">Name</Label>
-                          <Input id="chat-name" required className="rounded-xl" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="chat-phone">Telephone</Label>
-                          <Input id="chat-phone" type="tel" required className="rounded-xl" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="chat-email">Email</Label>
-                          <Input id="chat-email" type="email" required className="rounded-xl" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="chat-desc">Short Synopsis</Label>
-                          <Textarea id="chat-desc" required className="rounded-xl min-h-[80px]" />
-                        </div>
-                        <Button type="submit" className="w-full h-12 rounded-xl bg-accent font-bold">
-                          Check Availability
-                        </Button>
-                      </form>
-                    ) : (
-                      <div className="py-8 text-center space-y-4">
-                        <div className={`h-16 w-16 rounded-full flex items-center justify-center mx-auto ${isAdminAvailable ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"}`}>
-                          {isAdminAvailable ? <CheckCircle2 className="h-8 w-8" /> : <X className="h-8 w-8" />}
-                        </div>
-                        <h3 className="text-xl font-bold">
-                          {isAdminAvailable ? "Admin Connected" : "Admin Unavailable"}
-                        </h3>
-                        <p className="text-muted-foreground text-sm">
-                          {isAdminAvailable 
-                            ? "Connecting you to a live representative now..." 
-                            : "We're currently assisting other clients. We will get in contact with you shortly!"}
-                        </p>
-                        <Button 
-                          onClick={() => setChatStep(0)} 
-                          variant="outline" 
-                          className="rounded-xl"
-                        >
-                          Close
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </DialogContent>
-              </Dialog>
-
               <Button 
                 onClick={() => {
                   setIsFAQOpen(false);
                   window.location.href = "#contact";
                 }}
-                variant="outline"
-                className="w-full h-14 rounded-2xl border-accent/20 text-accent font-bold"
+                className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20"
               >
                 Initiate Consultation
               </Button>
@@ -465,7 +410,7 @@ export default function HomePage() {
       <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"} landscape:py-2`}>
         <div className="container mx-auto px-4 md:px-6">
           <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"} landscape:glass-card landscape:rounded-full landscape:px-4 landscape:py-1`}>
-            <div className="flex items-center">
+            <div className="flex items-center cursor-pointer select-none" onClick={handleLogoClick}>
               <img src={logoImg} alt="Arp" className="h-14 md:h-20 w-auto transition-all duration-500 object-contain landscape:h-12" />
             </div>
             
@@ -1130,6 +1075,136 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Admin Dashboard Dialog */}
+      <Dialog open={isAdminOpen} onOpenChange={setIsAdminOpen}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] border-none glass-card p-0 z-[200]">
+          {!isLoggedIn ? (
+            <div className="p-12">
+              <DialogHeader className="mb-8">
+                <DialogTitle className="text-3xl font-bold">Admin Portal</DialogTitle>
+                <p className="text-muted-foreground">Authorized access only.</p>
+              </DialogHeader>
+              <form onSubmit={handleAdminLogin} className="space-y-6 max-w-sm mx-auto">
+                <div className="space-y-2">
+                  <Label>Username</Label>
+                  <Input 
+                    value={adminAuth.user} 
+                    onChange={(e) => setAdminAuth(p => ({ ...p, user: e.target.value }))}
+                    className="h-12 rounded-xl bg-background/50" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Password</Label>
+                  <Input 
+                    type="password"
+                    value={adminAuth.pass} 
+                    onChange={(e) => setAdminAuth(p => ({ ...p, pass: e.target.value }))}
+                    className="h-12 rounded-xl bg-background/50" 
+                  />
+                </div>
+                <Button type="submit" className="w-full h-14 rounded-xl bg-accent font-bold text-white shadow-xl shadow-accent/20">
+                  Authenticate
+                </Button>
+              </form>
+            </div>
+          ) : (
+            <div className="p-8 md:p-12">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                <div>
+                  <h2 className="text-4xl font-bold tracking-tighter">Command Center</h2>
+                  <p className="text-muted-foreground">Managing ARP Excellence.</p>
+                </div>
+                <div className="flex items-center gap-4 bg-secondary/50 p-2 rounded-2xl border border-border/50">
+                  <span className="text-sm font-bold ml-2">Presence:</span>
+                  <div className="flex gap-1 bg-background/50 p-1 rounded-xl">
+                    <button 
+                      onClick={() => setAdminAvailable(true)}
+                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${adminAvailable ? "bg-green-500 text-white shadow-lg" : "text-muted-foreground hover:text-primary"}`}
+                    >
+                      Available
+                    </button>
+                    <button 
+                      onClick={() => setAdminAvailable(false)}
+                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${!adminAvailable ? "bg-orange-500 text-white shadow-lg" : "text-muted-foreground hover:text-primary"}`}
+                    >
+                      Away
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-8">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                      <Layout className="h-5 w-5 text-accent" />
+                      Incoming Leads
+                    </h3>
+                    <Badge variant="outline" className="rounded-full">Real-time</Badge>
+                  </div>
+                  <div className="grid gap-4">
+                    {[
+                      { name: "Sarah Miller", type: "Kitchen", status: "Urgent", date: "2m ago", zip: "10001" },
+                      { name: "John Stevens", type: "Plumbing", status: "New", date: "45m ago", zip: "11201" },
+                      { name: "Elena Rodriguez", type: "Bathroom", status: "New", date: "2h ago", zip: "10451" }
+                    ].map((lead, i) => (
+                      <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
+                            {lead.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-bold">{lead.name}</p>
+                            <p className="text-xs text-muted-foreground">{lead.type} • {lead.zip}</p>
+                          </div>
+                        </div>
+                        <div className="text-right flex items-center gap-6">
+                          <div>
+                            <p className="text-xs font-bold text-accent">{lead.status}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{lead.date}</p>
+                          </div>
+                          <Button variant="ghost" size="icon" className="rounded-xl opacity-0 group-hover:opacity-100">
+                            <ChevronRight className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="p-8 rounded-[2.5rem] bg-accent/5 border border-accent/10">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-accent" />
+                      Lead Summary
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 rounded-2xl bg-white/50 shadow-sm border border-border/50">
+                        <p className="text-2xl font-black text-accent">14</p>
+                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">Total Active</p>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-white/50 shadow-sm border border-border/50">
+                        <p className="text-2xl font-black text-green-500">6</p>
+                        <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">NY Qualified</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-8 rounded-[2.5rem] bg-secondary/50 border border-border/50">
+                    <h3 className="text-lg font-bold mb-4">Quick Actions</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button variant="outline" className="rounded-xl h-10 text-xs">Export CSV</Button>
+                      <Button variant="outline" className="rounded-xl h-10 text-xs">Clear Archive</Button>
+                      <Button variant="outline" className="rounded-xl h-10 text-xs">Sync DB</Button>
+                      <Button onClick={() => setIsLoggedIn(false)} variant="outline" className="rounded-xl h-10 text-xs text-orange-500 hover:text-orange-600">Logout</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
