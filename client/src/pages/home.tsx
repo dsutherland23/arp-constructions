@@ -185,6 +185,26 @@ export default function HomePage() {
   const [isFAQOpen, setIsFAQOpen] = useState(false);
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
 
+  const [chatStep, setChatStep] = useState(0); // 0: input, 1: status
+  const [isAdminAvailable, setIsAdminAvailable] = useState(false);
+
+  const handleLiveChat = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (window.navigator.vibrate) window.navigator.vibrate(10);
+    
+    // Simulate admin availability check
+    const available = Math.random() > 0.5;
+    setIsAdminAvailable(available);
+    setChatStep(1);
+    
+    if (!available) {
+      toast({
+        title: "Admin Unavailable",
+        description: "We'll get back to you shortly via the provided contact info.",
+      });
+    }
+  };
+
   const faqs = [
     { q: "What areas do you serve?", a: "We primarily serve New York and surrounding areas.", action: "Contact", link: "#contact" },
     { q: "How do I get a quote?", a: "You can initiate a consultation through our contact form or by calling us directly.", action: "Get Started", link: "#contact" },
@@ -362,14 +382,77 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-border/50">
-              <p className="text-xs text-muted-foreground text-center mb-4 italic">Ready to transform your space?</p>
+            <div className="mt-8 pt-6 border-t border-border/50 space-y-3">
+              <p className="text-xs text-muted-foreground text-center mb-1 italic">Ready to transform your space?</p>
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20 flex items-center justify-center gap-2">
+                    <Mail className="h-5 w-5" />
+                    Start Live Chat
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none glass-card p-0 z-[130]">
+                  <div className="p-8">
+                    <DialogHeader className="mb-6">
+                      <DialogTitle className="text-2xl font-bold">Live Chat</DialogTitle>
+                    </DialogHeader>
+                    
+                    {chatStep === 0 ? (
+                      <form onSubmit={handleLiveChat} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="chat-name">Name</Label>
+                          <Input id="chat-name" required className="rounded-xl" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="chat-phone">Telephone</Label>
+                          <Input id="chat-phone" type="tel" required className="rounded-xl" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="chat-email">Email</Label>
+                          <Input id="chat-email" type="email" required className="rounded-xl" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="chat-desc">Short Synopsis</Label>
+                          <Textarea id="chat-desc" required className="rounded-xl min-h-[80px]" />
+                        </div>
+                        <Button type="submit" className="w-full h-12 rounded-xl bg-accent font-bold">
+                          Check Availability
+                        </Button>
+                      </form>
+                    ) : (
+                      <div className="py-8 text-center space-y-4">
+                        <div className={`h-16 w-16 rounded-full flex items-center justify-center mx-auto ${isAdminAvailable ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"}`}>
+                          {isAdminAvailable ? <CheckCircle2 className="h-8 w-8" /> : <X className="h-8 w-8" />}
+                        </div>
+                        <h3 className="text-xl font-bold">
+                          {isAdminAvailable ? "Admin Connected" : "Admin Unavailable"}
+                        </h3>
+                        <p className="text-muted-foreground text-sm">
+                          {isAdminAvailable 
+                            ? "Connecting you to a live representative now..." 
+                            : "We're currently assisting other clients. We will get in contact with you shortly!"}
+                        </p>
+                        <Button 
+                          onClick={() => setChatStep(0)} 
+                          variant="outline" 
+                          className="rounded-xl"
+                        >
+                          Close
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+
               <Button 
                 onClick={() => {
                   setIsFAQOpen(false);
                   window.location.href = "#contact";
                 }}
-                className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20"
+                variant="outline"
+                className="w-full h-14 rounded-2xl border-accent/20 text-accent font-bold"
               >
                 Initiate Consultation
               </Button>
