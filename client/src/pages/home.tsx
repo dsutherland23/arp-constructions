@@ -219,6 +219,12 @@ export default function HomePage() {
     }
   };
 
+  const handleBack = () => {
+    if (window.navigator.vibrate) window.navigator.vibrate(5);
+    if (formStep === 4) setFormStep(0);
+    else if (formStep > 0) setFormStep(formStep - 1);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
@@ -742,8 +748,17 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="glass-card rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-12">
-                <form onSubmit={handleFormNext} className="grid gap-4 md:gap-6">
+              <div className="glass-card rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-12 relative">
+                {formStep > 0 && (
+                  <button 
+                    onClick={handleBack}
+                    className="absolute top-4 left-4 p-2 rounded-full hover:bg-secondary transition-colors text-muted-foreground hover:text-accent flex items-center gap-1 text-xs font-bold"
+                  >
+                    <ChevronRight className="h-4 w-4 rotate-180" />
+                    Back
+                  </button>
+                )}
+                <form onSubmit={handleFormNext} className="grid gap-4 md:gap-6 pt-4">
                   {formStep === 0 && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid gap-4">
                       <div className="grid gap-2">
