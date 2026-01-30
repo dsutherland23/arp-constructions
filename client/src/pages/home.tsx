@@ -561,7 +561,6 @@ export default function HomePage() {
                 <div className="flex flex-col gap-3 text-muted-foreground">
                   <a href="#" className="hover:text-primary transition-colors">Instagram</a>
                   <a href="#" className="hover:text-primary transition-colors">LinkedIn</a>
-                  <a href="#" className="hover:text-primary transition-colors">Dribbble</a>
                 </div>
               </div>
             </div>
