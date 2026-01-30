@@ -42,7 +42,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 // Assets
-import logoImg from "@assets/ARP_logo_1769723239419.png";
+import logoImg from "@assets/ARP_logo_2_1769746198034.png";
 import renoImg from "@/assets/images/project-reno-1.png";
 import plumbingImg from "@/assets/images/project-plumbing-1.png";
 import bathroomImg from "@/assets/images/project-bathroom.png";
@@ -299,18 +299,17 @@ export default function HomePage() {
       <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"}`}>
         <div className="container mx-auto px-4 md:px-6">
           <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"}`}>
-            <div className="flex items-center">
-              <img src={logoImg} alt="Arp" className="h-20 md:h-40 w-auto transition-all duration-500" />
+            <div className="flex items-center min-w-[200px]">
+              <img src={logoImg} alt="Arp" className="h-24 md:h-44 w-auto transition-all duration-500 object-contain" />
             </div>
             
-            {/* Desktop Nav */}
-            <div className="hidden items-center gap-8 md:flex">
+            <div className="hidden items-center gap-6 lg:flex ml-auto">
               {navItems.map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-medium tracking-tight text-primary/80 transition-colors hover:text-accent">
+                <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-semibold tracking-tight text-primary hover:text-accent transition-all duration-300">
                   {item}
                 </a>
               ))}
-              <Button size="sm" className="rounded-full bg-primary px-6 hover:bg-accent transition-all">
+              <Button size="sm" className="rounded-full bg-primary px-8 hover:bg-accent transition-all shadow-lg hover:shadow-accent/20">
                 Book a Consult
               </Button>
             </div>
