@@ -107,12 +107,12 @@ const detailedServices = [
   {
     title: "General Home Maintenance",
     icon: Wrench,
-    items: ["Minor appliance maintenance", "Replace HVAC air filter", "Replace smoke detector batteries", "Interior + exterior caulking", "First story gutter inspection", "Sump pump inspection", "Paint touch-ups", "Weatherstripping", "Deck and patio maintenance", "Power washing", "Child and pet safety checks"]
+    items: ["Minor appliance maintenance", "Replace HVAC air filter", "Replace smoke detector batteries", "Interior + exterior caulking", "First story gutter inspection", "Sump pump inspection", "Paint touch-ups", "Weatherstripping", "Deck and patio maintenance", "Power washing"]
   },
   {
     title: "Blinds and Window Treatments",
     icon: Layout,
-    items: ["Install curtain rods", "Install blinds", "Hang curtains", "Fitting blinds and curtains", "Lubricate tracks and rods", "Replace slats or panels", "Tighten and adjust hardware", "Dusting and wipe down"]
+    items: ["Install curtain rods", "Install blinds", "Hang curtains", "Fitting blinds and curtains", "Lubricate tracks and rods", "Tighten and adjust hardware"]
   },
   {
     title: "Doors and Windows",
