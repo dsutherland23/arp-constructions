@@ -173,6 +173,14 @@ export default function HomePage() {
     { q: "Tell me about ARP Construction", a: "ARP Construction is a premier New York-based renovation firm. We specialize in high-end plumbing, kitchens, and bathrooms, bringing architectural precision to every project.", action: "Learn More", link: "#process" }
   ];
 
+  const mobileNav = [
+    { label: "Home", icon: Sparkles, href: "#" },
+    { label: "Services", icon: Hammer, href: "#services" },
+    { label: "Projects", icon: Building2, href: "#projects" },
+    { label: "Reviews", icon: Quote, href: "#reviews" },
+    { label: "Contact", icon: Phone, href: "#contact" }
+  ];
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -219,14 +227,34 @@ export default function HomePage() {
   return (
     <div className="noise-bg min-h-screen">
       {/* FAQ Assistant Button */}
-      <div className="fixed bottom-8 right-8 z-[110]">
+      <div className="fixed bottom-24 md:bottom-8 right-6 md:right-8 z-[110]">
         <Button 
           onClick={() => setIsFAQOpen(true)}
-          className="h-16 w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden"
+          className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden"
         >
           <span className="absolute inset-0 bg-gradient-to-tr from-accent to-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Sparkles className="h-8 w-8 relative z-10" />
+          <Sparkles className="h-6 w-6 md:h-8 md:w-8 relative z-10" />
         </Button>
+      </div>
+
+      {/* Mobile App-Style Footer Menu */}
+      <div className="fixed bottom-0 left-0 z-[120] w-full md:hidden">
+        <div className="mx-4 mb-4 glass-card shadow-[0_-10px_40px_rgba(0,0,0,0.2)] rounded-2xl flex items-center justify-around py-3 px-2 border border-white/10 backdrop-blur-xl">
+          {mobileNav.map((item) => (
+            <a 
+              key={item.label} 
+              href={item.href} 
+              className="flex flex-col items-center gap-1 group relative py-1"
+            >
+              <div className="p-2 rounded-xl group-hover:bg-accent/10 transition-colors">
+                <item.icon className="h-5 w-5 text-primary group-hover:text-accent transition-colors" />
+              </div>
+              <span className="text-[10px] font-bold tracking-tight text-primary/60 group-hover:text-accent uppercase">
+                {item.label}
+              </span>
+            </a>
+          ))}
+        </div>
       </div>
 
       <Dialog open={isFAQOpen} onOpenChange={setIsFAQOpen}>
