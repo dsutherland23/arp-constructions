@@ -164,10 +164,18 @@ export default function HomePage() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Save to LocalStorage for persistence in this mockup
+    const existingSubmissions = JSON.parse(localStorage.getItem("contact_submissions") || "[]");
+    localStorage.setItem("contact_submissions", JSON.stringify([...existingSubmissions, { ...data, date: new Date().toISOString() }]));
+    
     toast({
       title: "Strategy Session Booked",
-      description: "We'll reach out to your team shortly.",
+      description: "We've saved your request locally and will reach out shortly.",
     });
+    (e.target as HTMLFormElement).reset();
   };
 
   const navItems = ["Services", "Projects", "Process", "Contact"];
