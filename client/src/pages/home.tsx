@@ -659,7 +659,7 @@ export default function HomePage() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { step: "01", title: "Strategy", desc: "Initial consult to define your vision and budget." },
-              { step: "02", title: "Design", desc: "Detailed 3D mockups and material selection." },
+              { step: "02", title: "Design", desc: "Material selection." },
               { step: "03", title: "Build", desc: "Precision construction with daily progress updates." },
               { step: "04", title: "Handoff", desc: "Final walkthrough and 2026 quality certification." }
             ].map((item, i) => (
