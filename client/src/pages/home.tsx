@@ -179,7 +179,31 @@ export default function HomePage() {
     (e.target as HTMLFormElement).reset();
   };
 
-  const navItems = ["Services", "Projects", "Process", "Contact"];
+  const [reviews, setReviews] = useState([
+    { name: "Sarah J.", text: "The bathroom renovation exceeded all my expectations. Every detail is perfect.", rating: 5, date: "Jan 2026" },
+    { name: "Michael R.", text: "Top-tier professionalism. The plumbing issues were fixed quickly and permanently.", rating: 5, date: "Dec 2025" },
+    { name: "David L.", text: "Incredible attention to detail in the kitchen. Truly elevated our home.", rating: 5, date: "Nov 2025" }
+  ]);
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const newReview = {
+      name: formData.get("name") as string,
+      text: formData.get("review") as string,
+      rating: 5, // Default for mockup
+      date: "Just now"
+    };
+    setReviews([newReview, ...reviews]);
+    toast({
+      title: "Review Submitted",
+      description: "Thank you for your feedback!",
+      className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl",
+    });
+    (e.target as HTMLFormElement).reset();
+  };
+
+  const navItems = ["Services", "Projects", "Process", "Reviews", "Contact"];
 
   return (
     <div className="noise-bg min-h-screen">
@@ -469,6 +493,73 @@ export default function HomePage() {
                 <h3 className="text-lg md:text-xl font-bold mb-3 relative z-10">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews Section */}
+      <section id="reviews" className="py-20 md:py-32">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-20">
+            <div>
+              <Badge variant="outline" className="mb-4 rounded-full border-accent/20 bg-accent/5 px-4 py-1 text-accent">
+                Wall of Fame
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">Client Stories</h2>
+            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="rounded-full bg-accent hover:bg-primary px-8">
+                  Leave a Review
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md rounded-[2rem] border-none glass-card p-0 z-[101]">
+                <div className="p-8">
+                  <DialogHeader className="mb-8">
+                    <DialogTitle className="text-3xl font-bold">Share Your Experience</DialogTitle>
+                    <p className="text-muted-foreground">Your feedback helps us maintain our 2026 standard of excellence.</p>
+                  </DialogHeader>
+                  <form onSubmit={handleReviewSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="review-name">Name</Label>
+                      <Input id="review-name" name="name" placeholder="How should we address you?" required className="h-12 rounded-xl bg-background/50" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="review-text">Your Review</Label>
+                      <Textarea id="review-text" name="review" placeholder="Tell us about your project..." required className="min-h-[120px] rounded-xl bg-background/50" />
+                    </div>
+                    <Button type="submit" className="w-full h-14 rounded-xl bg-accent font-bold">
+                      Submit Review
+                    </Button>
+                  </form>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {reviews.map((review, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="p-8 rounded-[2rem] bg-card border border-border/50 shadow-sm relative overflow-hidden group"
+              >
+                <Quote className="absolute -top-2 -right-2 h-20 w-20 text-accent/5 transition-transform group-hover:scale-110" />
+                <div className="flex gap-1 mb-4">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <Sparkles key={i} className="h-4 w-4 text-accent" />
+                  ))}
+                </div>
+                <p className="text-muted-foreground leading-relaxed mb-6 italic">"{review.text}"</p>
+                <div className="flex items-center justify-between">
+                  <p className="font-bold">{review.name}</p>
+                  <p className="text-xs text-muted-foreground">{review.date}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
