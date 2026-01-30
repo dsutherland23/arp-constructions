@@ -239,20 +239,23 @@ export default function HomePage() {
 
       {/* Mobile App-Style Footer Menu */}
       <div className="fixed bottom-0 left-0 z-[120] w-full md:hidden transition-transform duration-300" style={{ transform: isMobileMenuOpen ? 'translateY(100%)' : 'translateY(0)' }}>
-        <div className="mx-4 mb-4 glass-card shadow-[0_-10px_40px_rgba(0,0,0,0.2)] rounded-2xl flex items-center justify-around py-3 px-2 border border-white/10 backdrop-blur-xl">
+        <div className="mx-4 mb-4 glass-card shadow-[0_-10px_40px_rgba(0,0,0,0.3)] rounded-[2.5rem] flex items-center justify-around py-4 px-2 border border-white/20 backdrop-blur-2xl ring-1 ring-white/10">
           {mobileNav.map((item) => (
-            <a 
+            <button 
               key={item.label} 
-              href={item.href} 
-              className="flex flex-col items-center gap-1 group relative py-1"
+              onClick={() => {
+                if (window.navigator.vibrate) window.navigator.vibrate(10);
+                window.location.href = item.href;
+              }}
+              className="flex flex-col items-center gap-1 group relative py-1 flex-1"
             >
-              <div className="p-2 rounded-xl group-hover:bg-accent/10 transition-colors">
-                <item.icon className="h-5 w-5 text-primary group-hover:text-accent transition-colors" />
+              <div className="p-2 rounded-2xl group-hover:bg-accent group-active:scale-90 transition-all duration-200">
+                <item.icon className="h-6 w-6 text-primary group-hover:text-white transition-colors" />
               </div>
-              <span className="text-[10px] font-bold tracking-tight text-primary/60 group-hover:text-accent uppercase">
+              <span className="text-[10px] font-bold tracking-tight text-primary/40 group-hover:text-primary uppercase">
                 {item.label}
               </span>
-            </a>
+            </button>
           ))}
         </div>
       </div>
