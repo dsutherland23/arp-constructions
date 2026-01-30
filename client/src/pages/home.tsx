@@ -377,8 +377,12 @@ export default function HomePage() {
                   {item}
                 </a>
               ))}
-              <Button size="sm" className="rounded-full bg-primary px-8 hover:bg-accent transition-all shadow-lg hover:shadow-accent/20">
-                Book a Consult
+              <Button 
+                size="sm" 
+                className="rounded-full bg-primary px-8 hover:bg-accent transition-all shadow-lg hover:shadow-accent/20"
+                asChild
+              >
+                <a href="#contact">Book a Consult</a>
               </Button>
             </div>
             
