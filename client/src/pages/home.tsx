@@ -316,8 +316,8 @@ export default function HomePage() {
                     </div>
                   </motion.div>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2rem] border-none glass-card p-0">
-                  <div className="p-8 md:p-12">
+                <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2rem] border-none glass-card p-0 z-[101]">
+                  <div className="p-6 md:p-12 pt-16 md:pt-12">
                     <DialogHeader className="mb-12">
                       <DialogTitle className="text-4xl font-bold tracking-tight text-gradient">Full Service Catalog</DialogTitle>
                       <p className="text-muted-foreground mt-2">Professional solutions for every corner of your home.</p>
