@@ -762,7 +762,7 @@ export default function HomePage() {
                     Back
                   </button>
                 )}
-                <form onSubmit={handleFormNext} className="grid gap-4 md:gap-6 pt-4">
+                <form onSubmit={handleFormNext} className="grid gap-4 md:gap-6 pt-10">
                   {formStep === 0 && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid gap-4">
                       <div className="grid gap-2">
