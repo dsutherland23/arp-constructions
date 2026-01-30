@@ -174,6 +174,7 @@ export default function HomePage() {
     toast({
       title: "Strategy Session Booked",
       description: "We've saved your request locally and will reach out shortly.",
+      className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl",
     });
     (e.target as HTMLFormElement).reset();
   };
