@@ -299,8 +299,8 @@ export default function HomePage() {
       <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"}`}>
         <div className="container mx-auto px-4 md:px-6">
           <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"}`}>
-            <div className="flex items-center min-w-[200px]">
-              <img src={logoImg} alt="Arp" className="h-24 md:h-44 w-auto transition-all duration-500 object-contain" />
+            <div className="flex items-center">
+              <img src={logoImg} alt="Arp" className="h-14 md:h-20 w-auto transition-all duration-500 object-contain" />
             </div>
             
             <div className="hidden items-center gap-6 lg:flex ml-auto">
