@@ -146,6 +146,11 @@ export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminAuth, setAdminAuth] = useState({ user: "", pass: "" });
   const [adminAvailable, setAdminAvailable] = useState(true);
+  const [submissions, setSubmissions] = useState<any[]>([
+    { name: "Sarah Miller", type: "Kitchen", status: "Urgent", date: "2m ago", zip: "10001", id: 1 },
+    { name: "John Stevens", type: "Plumbing", status: "New", date: "45m ago", zip: "11201", id: 2 },
+    { name: "Elena Rodriguez", type: "Bathroom", status: "New", date: "2h ago", zip: "10451", id: 3 }
+  ]);
 
   const handleLogoClick = () => {
     setLogoClicks(prev => {
@@ -221,6 +226,20 @@ export default function HomePage() {
   const handleLiveChat = (e: React.FormEvent) => {
     e.preventDefault();
     if (window.navigator.vibrate) window.navigator.vibrate(10);
+    
+    const newLead = {
+      name: chatLead.name,
+      type: "Live Chat",
+      status: adminAvailable ? "Connected" : "Missed",
+      date: "Just now",
+      zip: "---",
+      phone: chatLead.phone,
+      email: chatLead.email,
+      desc: chatLead.desc,
+      id: Date.now()
+    };
+    setSubmissions(prev => [newLead, ...prev]);
+    
     setChatStep(1);
     if (!adminAvailable) {
       toast({
@@ -274,6 +293,18 @@ export default function HomePage() {
     } else if (formStep === 2) {
       setFormStep(3);
     } else if (formStep === 3) {
+      const newLead = {
+        name: formData.name,
+        type: "Consultation",
+        status: "New",
+        date: "Just now",
+        zip: formData.zip,
+        phone: formData.phone,
+        email: formData.email,
+        id: Date.now()
+      };
+      setSubmissions(prev => [newLead, ...prev]);
+      
       toast({
         title: "Strategy Session Booked",
         description: "We've received your information and will reach out shortly.",
@@ -1244,12 +1275,8 @@ export default function HomePage() {
                     <Badge variant="outline" className="rounded-full">Real-time</Badge>
                   </div>
                   <div className="grid gap-4">
-                    {[
-                      { name: "Sarah Miller", type: "Kitchen", status: "Urgent", date: "2m ago", zip: "10001" },
-                      { name: "John Stevens", type: "Plumbing", status: "New", date: "45m ago", zip: "11201" },
-                      { name: "Elena Rodriguez", type: "Bathroom", status: "New", date: "2h ago", zip: "10451" }
-                    ].map((lead, i) => (
-                      <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group">
+                    {submissions.map((lead, i) => (
+                      <div key={lead.id} className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group">
                         <div className="flex items-center gap-4">
                           <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
                             {lead.name.charAt(0)}
@@ -1261,7 +1288,7 @@ export default function HomePage() {
                         </div>
                         <div className="text-right flex items-center gap-6">
                           <div>
-                            <p className="text-xs font-bold text-accent">{lead.status}</p>
+                            <p className={`text-xs font-bold ${lead.status === 'Urgent' ? 'text-red-500' : 'text-accent'}`}>{lead.status}</p>
                             <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{lead.date}</p>
                           </div>
                           <Button variant="ghost" size="icon" className="rounded-xl opacity-0 group-hover:opacity-100">
