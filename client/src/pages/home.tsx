@@ -392,6 +392,7 @@ export default function HomePage() {
               ))}
             </div>
 
+            <div className="mt-8 pt-6 border-t border-border/50">
               <Button 
                 onClick={() => {
                   setIsFAQOpen(false);
