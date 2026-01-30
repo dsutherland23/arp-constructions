@@ -162,6 +162,17 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  const [isFAQOpen, setIsFAQOpen] = useState(false);
+  const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
+
+  const faqs = [
+    { q: "What areas do you serve?", a: "We primarily serve the greater Charlotte area and surrounding communities.", action: "Contact", link: "#contact" },
+    { q: "Are you licensed and insured?", a: "Yes, we are fully licensed and maintain platinum-level insurance for your peace of mind.", action: "View Services", link: "#services" },
+    { q: "How do I get a quote?", a: "You can initiate a consultation through our contact form or by calling us directly.", action: "Get Started", link: "#contact" },
+    { q: "Do you handle small repairs?", a: "Absolutely. No job is too small for our expert team, from leaky faucets to shelf mounting.", action: "See Capabilities", link: "#services" },
+    { q: "What is your typical timeline?", a: "Timelines vary by project size, but we provide a detailed schedule during the strategy phase.", action: "Our Process", link: "#process" }
+  ];
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -207,6 +218,83 @@ export default function HomePage() {
 
   return (
     <div className="noise-bg min-h-screen">
+      {/* FAQ Assistant Button */}
+      <div className="fixed bottom-8 right-8 z-[110]">
+        <Button 
+          onClick={() => setIsFAQOpen(true)}
+          className="h-16 w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden"
+        >
+          <span className="absolute inset-0 bg-gradient-to-tr from-accent to-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Sparkles className="h-8 w-8 relative z-10" />
+        </Button>
+      </div>
+
+      <Dialog open={isFAQOpen} onOpenChange={setIsFAQOpen}>
+        <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none glass-card p-0 z-[120]">
+          <div className="p-8">
+            <DialogHeader className="mb-8">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 rounded-2xl bg-accent/20 flex items-center justify-center">
+                  <Sparkles className="h-5 w-5 text-accent" />
+                </div>
+                <DialogTitle className="text-2xl font-bold">ARP Assistant</DialogTitle>
+              </div>
+              <p className="text-muted-foreground">How can I help you today? Select a common question or reach out directly.</p>
+            </DialogHeader>
+            
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              {faqs.map((faq, i) => (
+                <div key={i} className="space-y-2">
+                  <button
+                    onClick={() => setActiveFAQ(activeFAQ === i ? null : i)}
+                    className="w-full text-left p-4 rounded-2xl bg-secondary/50 hover:bg-secondary transition-colors flex items-center justify-between group"
+                  >
+                    <span className="text-sm font-medium pr-4">{faq.q}</span>
+                    <ChevronRight className={`h-4 w-4 text-accent transition-transform ${activeFAQ === i ? "rotate-90" : ""}`} />
+                  </button>
+                  <AnimatePresence>
+                    {activeFAQ === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-4 pt-2 space-y-4">
+                          <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="rounded-full border-accent/20 text-accent hover:bg-accent/5"
+                            asChild
+                            onClick={() => setIsFAQOpen(false)}
+                          >
+                            <a href={faq.link}>{faq.action}</a>
+                          </Button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-border/50">
+              <p className="text-xs text-muted-foreground text-center mb-4 italic">Ready to transform your space?</p>
+              <Button 
+                onClick={() => {
+                  setIsFAQOpen(false);
+                  window.location.href = "#contact";
+                }}
+                className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20"
+              >
+                Initiate Consultation
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Navigation */}
       <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"}`}>
         <div className="container mx-auto px-4 md:px-6">
