@@ -202,11 +202,6 @@ export default function HomePage() {
       if (isNY) {
         setFormStep(1);
       } else {
-        toast({
-          title: "Outside Service Area",
-          description: "We're not yet taking members in your neighborhood right now. As soon as we are, we'll reach out!",
-          className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl",
-        });
         setFormStep(4); // Waitlist
       }
     } else if (formStep === 1) {
