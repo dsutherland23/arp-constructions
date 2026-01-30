@@ -181,21 +181,47 @@ export default function HomePage() {
     { label: "Contact", icon: Phone, href: "#contact" }
   ];
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const [formStep, setFormStep] = useState(0); // 0: zip, 1: details, 2: referral, 3: confirm, 4: waitlist
+  const [formData, setFormData] = useState({
+    zip: "",
+    name: "",
+    email: "",
+    phone: "",
+    referral: "",
+    address: ""
+  });
+
+  const NY_ZIP_PREFIXES = ["10", "11", "12", "13", "14"]; // NY State range
+
+  const handleFormNext = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
-    const data = Object.fromEntries(formData.entries());
-    
-    // Save to LocalStorage for persistence in this mockup
-    const existingSubmissions = JSON.parse(localStorage.getItem("contact_submissions") || "[]");
-    localStorage.setItem("contact_submissions", JSON.stringify([...existingSubmissions, { ...data, date: new Date().toISOString() }]));
-    
-    toast({
-      title: "Strategy Session Booked",
-      description: "We've saved your request locally and will reach out shortly.",
-      className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl",
-    });
-    (e.target as HTMLFormElement).reset();
+    if (window.navigator.vibrate) window.navigator.vibrate(10);
+
+    if (formStep === 0) {
+      const isNY = NY_ZIP_PREFIXES.some(prefix => formData.zip.startsWith(prefix));
+      if (isNY) {
+        setFormStep(1);
+      } else {
+        setFormStep(4); // Waitlist
+      }
+    } else if (formStep === 1) {
+      setFormStep(2);
+    } else if (formStep === 2) {
+      setFormStep(3);
+    } else if (formStep === 3) {
+      toast({
+        title: "Strategy Session Booked",
+        description: "We've received your information and will reach out shortly.",
+        className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl",
+      });
+      setFormStep(0);
+      setFormData({ zip: "", name: "", email: "", phone: "", referral: "", address: "" });
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
   };
 
   const [reviews, setReviews] = useState([
@@ -717,22 +743,114 @@ export default function HomePage() {
               </div>
 
               <div className="glass-card rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-12">
-                <form onSubmit={handleFormSubmit} className="grid gap-4 md:gap-6">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Contact Us</Label>
-                    <Input id="name" placeholder="Full Name" required className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="email@address.com" required className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="message">Project Vision</Label>
-                    <Textarea id="message" placeholder="Briefly describe your goals..." className="min-h-[120px] md:min-h-[150px] rounded-xl md:rounded-2xl bg-background/50" />
-                  </div>
-                  <Button type="submit" size="lg" className="h-14 md:h-16 rounded-xl md:rounded-2xl bg-accent text-base md:text-lg font-bold hover:bg-primary transition-all">
-                    Initiate Consult <MoveRight className="ml-2 h-5 w-5" />
-                  </Button>
+                <form onSubmit={handleFormNext} className="grid gap-4 md:gap-6">
+                  {formStep === 0 && (
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="zip">Enter Zip Code</Label>
+                        <Input 
+                          id="zip" 
+                          placeholder="e.g. 10001" 
+                          value={formData.zip}
+                          onChange={handleInputChange}
+                          required 
+                          className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50" 
+                        />
+                      </div>
+                      <Button type="submit" size="lg" className="h-14 md:h-16 rounded-xl md:rounded-2xl bg-accent font-bold hover:bg-primary">
+                        Check Availability <MoveRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    </motion.div>
+                  )}
+
+                  {formStep === 1 && (
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="name">Full Name</Label>
+                        <Input id="name" placeholder="John Doe" value={formData.name} onChange={handleInputChange} required className="h-12 md:h-14 rounded-xl bg-background/50" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleInputChange} required className="h-12 md:h-14 rounded-xl bg-background/50" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input id="phone" type="tel" placeholder="(555) 000-0000" value={formData.phone} onChange={handleInputChange} required className="h-12 md:h-14 rounded-xl bg-background/50" />
+                      </div>
+                      <Button type="submit" size="lg" className="h-14 md:h-16 rounded-xl bg-accent font-bold hover:bg-primary">
+                        Continue <MoveRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    </motion.div>
+                  )}
+
+                  {formStep === 4 && (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="grid gap-4 text-center">
+                      <div className="py-6 space-y-4">
+                        <div className="h-16 w-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent">
+                          <MapPin className="h-8 w-8" />
+                        </div>
+                        <h3 className="text-xl font-bold">Outside Service Area</h3>
+                        <p className="text-muted-foreground text-sm">We're not yet taking members in your neighborhood right now. As soon as we are, we'll reach out!</p>
+                      </div>
+                      <div className="grid gap-4 text-left">
+                        <div className="grid gap-2">
+                          <Label htmlFor="name">Full Name</Label>
+                          <Input id="name" placeholder="John Doe" value={formData.name} onChange={handleInputChange} required className="h-12 rounded-xl bg-background/50" />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input id="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleInputChange} required className="h-12 rounded-xl bg-background/50" />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="phone">Phone</Label>
+                          <Input id="phone" type="tel" placeholder="Phone Number" value={formData.phone} onChange={handleInputChange} required className="h-12 rounded-xl bg-background/50" />
+                        </div>
+                      </div>
+                      <Button onClick={() => setFormStep(2)} className="h-14 rounded-xl bg-accent font-bold">
+                        Join Waitlist
+                      </Button>
+                    </motion.div>
+                  )}
+
+                  {formStep === 2 && (
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid gap-4">
+                      <Label>How did you hear about us?</Label>
+                      <div className="grid gap-2">
+                        {["Friend or neighbor", "Mailer or flyer", "Social media", "Google or online", "Other"].map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => {
+                              setFormData(prev => ({ ...prev, referral: opt }));
+                              setFormStep(3);
+                            }}
+                            className={`w-full p-4 rounded-xl border text-left transition-all ${formData.referral === opt ? "bg-accent border-accent text-white" : "bg-background/50 border-border hover:border-accent"}`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {formStep === 3 && (
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="address">Confirm Address</Label>
+                        <Input id="address" placeholder="Full Address" value={formData.address} onChange={handleInputChange} required className="h-12 md:h-14 rounded-xl bg-background/50" />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="phone">Confirm Telephone</Label>
+                        <Input id="phone" value={formData.phone} onChange={handleInputChange} required className="h-12 md:h-14 rounded-xl bg-background/50" />
+                      </div>
+                      <div className="py-4 text-center bg-accent/5 rounded-2xl border border-accent/10">
+                        <p className="text-sm font-medium text-accent">We'll reach out when we can serve your home.</p>
+                      </div>
+                      <Button type="submit" size="lg" className="h-14 md:h-16 rounded-xl bg-accent font-bold hover:bg-primary">
+                        Complete Inquiry
+                      </Button>
+                    </motion.div>
+                  )}
                 </form>
               </div>
             </div>
