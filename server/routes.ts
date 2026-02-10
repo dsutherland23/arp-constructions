@@ -124,18 +124,17 @@ export async function registerRoutes(
       };
 
       console.log(`[SMTP] Attempting to send ${leadType.toLowerCase()} email...`);
-      const info = await transporter.sendMail(mailOptions);
-      console.log("[SMTP] Email sent successfully:", info.messageId);
-      res.json({ success: true, message: `${leadType} sent successfully` });
-    } catch (error: any) {
-      console.error("[SMTP] Email sending error details:", {
-        message: error.message,
-        code: error.code,
-        command: error.command,
-        response: error.response,
-        stack: error.stack
+      transporter.sendMail(mailOptions)
+        .then(info => console.log("[SMTP] Email sent successfully:", info.messageId))
+        .catch(error => console.error("[SMTP] Non-blocking email error:", error.message));
+
+      res.json({
+        success: true,
+        message: `${leadType} recorded successfully. Transitioning to email client.`
       });
-      res.status(500).json({ message: "Failed to send inquiry. Please check server logs." });
+    } catch (error: any) {
+      console.error("[API] Contact form error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 

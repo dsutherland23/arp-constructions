@@ -395,7 +395,6 @@ export default function HomePage() {
       // Let's use the current formStep to infer. If formStep 0 led to 4, and then they clicked to proceed,
       // they would eventually reach formStep 3.
       // The `formData.address` is only collected in the "Consultation" path (formStep 1).
-      // If they went to formStep 4, then clicked "Join Waitlist", they would fill out name, email, phone, but not address.
       // So, if address is empty, it's a waitlist. If address is present, it's a consultation.
 
       const newLead = {
@@ -411,47 +410,48 @@ export default function HomePage() {
         id: Date.now()
       };
 
-      // Send to backend
+      // Construct mailto link
+      const mailtoTo = "info@arpconstructionpro.org";
+      const mailtoSubject = encodeURIComponent(`${leadType} Request – ${formData.name}`);
+      const mailtoBody = encodeURIComponent(
+        `Hello,\n\n` +
+        `I would like to request a ${leadType.toLowerCase()}.\n\n` +
+        `Name: ${formData.name}\n` +
+        `Email: ${formData.email}\n` +
+        `Phone: ${formData.phone || "N/A"}\n` +
+        `Zip Code: ${formData.zip}\n` +
+        `Address: ${formData.address || "N/A"}\n` +
+        `Referral: ${formData.referral}\n\n` +
+        `Message: I am interested in ${leadType === "Waitlist" ? "joining the waitlist" : "a consultation"} for my project.\n\n` +
+        `Thank you.`
+      );
+      const mailtoLink = `mailto:${mailtoTo}?subject=${mailtoSubject}&body=${mailtoBody}`;
+
+      // 1. Record lead to database first (for Command Center visibility)
       fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newLead),
       })
-        .then(async res => {
-          const isJson = res.headers.get("content-type")?.includes("application/json");
-          const data = isJson ? await res.json() : null;
-
-          if (!res.ok) {
-            const errorMsg = data?.message || `Server error (${res.status})`;
-            throw new Error(errorMsg);
-          }
-
-          if (data && data.success) {
-            const isWaitlistPath = leadType === "Waitlist";
-            toast({
-              title: isWaitlistPath ? "Joined Waitlist" : "Strategy Session Booked",
-              description: isWaitlistPath
-                ? "We've added you to our waitlist and will reach out when we expand to your area."
-                : "We've received your information and will reach out shortly.",
-              className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl smoke-glow",
-            });
-          } else {
-            throw new Error(data?.message || "Failed to send inquiry");
-          }
-        })
-        .catch(err => {
-          console.error("Form submission error details:", err);
-          const errorMsg = err instanceof Error ? err.message : String(err);
+        .finally(() => {
+          // 2. Regardless of DB success, open the email client
+          // This ensures the lead is never lost even if the server is down or database is slow
           toast({
-            title: "Submission Error",
-            description: `Error: ${errorMsg}. Please try again later or call us.`,
-            variant: "destructive"
+            title: "Transitioning to Email",
+            description: "Your email app will open to send this message. Please press 'Send' to complete your request.",
+            className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl smoke-glow",
           });
-        });
 
-      // Lead will be saved to DB by server and fetched by admin portal query
-      setFormStep(0);
-      setFormData({ zip: "", name: "", email: "", phone: "", referral: "", address: "" });
+          // Delay slightly to let the user read the toast
+          setTimeout(() => {
+            window.location.href = mailtoLink;
+            // Optionally reset form step after a longer delay
+            setTimeout(() => {
+              setFormStep(0);
+              setFormData({ zip: "", name: "", email: "", phone: "", referral: "", address: "" });
+            }, 1000);
+          }, 1500);
+        });
     }
   };
 
