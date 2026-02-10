@@ -1358,7 +1358,7 @@ export default function HomePage() {
       <Dialog open={isAdminOpen} onOpenChange={setIsAdminOpen}>
         <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] border-none glass-card p-0 z-[200]">
           {!isLoggedIn ? (
-            <div className="p-12">
+            <div className="p-6 md:p-12">
               <DialogHeader className="mb-8">
                 <DialogTitle className="text-3xl font-bold">Admin Portal</DialogTitle>
                 <p className="text-muted-foreground">Authorized access only.</p>
@@ -1387,7 +1387,7 @@ export default function HomePage() {
               </form>
             </div>
           ) : (
-            <div className="p-8 md:p-12">
+            <div className="p-4 md:p-12 h-full overflow-y-auto custom-scrollbar">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                 <div>
                   <h2 className="text-4xl font-bold tracking-tighter">Command Center</h2>
@@ -1437,14 +1437,14 @@ export default function HomePage() {
                     </div>
                   </div>
                   <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-                    <TabsList className="bg-secondary/50 p-1 rounded-2xl h-11 mb-4">
-                      <TabsTrigger value="all" className="rounded-xl px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                    <TabsList className="bg-secondary/50 p-1 rounded-2xl h-auto flex-wrap mb-4">
+                      <TabsTrigger value="all" className="rounded-xl px-4 md:px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white flex-1 md:flex-none">
                         All ({leads.length})
                       </TabsTrigger>
-                      <TabsTrigger value="consultation" className="rounded-xl px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                      <TabsTrigger value="consultation" className="rounded-xl px-4 md:px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white flex-1 md:flex-none">
                         Consultations ({leads.filter(l => l.type === 'Consultation').length})
                       </TabsTrigger>
-                      <TabsTrigger value="waitlist" className="rounded-xl px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                      <TabsTrigger value="waitlist" className="rounded-xl px-4 md:px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white flex-1 md:flex-none">
                         Waitlist ({leads.filter(l => l.type === 'Waitlist').length})
                       </TabsTrigger>
                     </TabsList>
@@ -1462,23 +1462,23 @@ export default function HomePage() {
                           .map((lead) => (
                             <div
                               key={lead.id}
-                              className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group cursor-pointer"
+                              className="flex flex-col md:flex-row md:items-center justify-between p-4 md:p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group cursor-pointer"
                               onClick={() => {
                                 setSelectedLead(lead);
                                 setIsLeadDetailOpen(true);
                               }}
                             >
-                              <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
+                              <div className="flex items-center gap-4 w-full md:w-auto">
+                                <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold shrink-0">
                                   {lead.name.charAt(0)}
                                 </div>
-                                <div>
-                                  <p className="font-bold">{lead.name}</p>
-                                  <p className="text-xs text-muted-foreground">{lead.type} • {lead.zip}</p>
+                                <div className="min-w-0">
+                                  <p className="font-bold truncate">{lead.name}</p>
+                                  <p className="text-xs text-muted-foreground truncate">{lead.type} • {lead.zip}</p>
                                 </div>
                               </div>
-                              <div className="text-right flex items-center gap-6">
-                                <div>
+                              <div className="flex items-center justify-between w-full md:w-auto md:justify-end gap-4 md:gap-6 mt-3 md:mt-0 pt-3 md:pt-0 border-t border-border/10 md:border-t-0">
+                                <div className="text-left md:text-right">
                                   <p className={`text-xs font-bold ${lead.status === 'Urgent' ? 'text-red-500' : 'text-accent'}`}>{lead.status}</p>
                                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
                                     {new Date(lead.createdAt).toLocaleDateString()}
@@ -1487,7 +1487,7 @@ export default function HomePage() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="rounded-xl opacity-0 group-hover:opacity-100 text-destructive hover:bg-destructive/10"
+                                  className="rounded-xl md:opacity-0 md:group-hover:opacity-100 text-destructive hover:bg-destructive/10"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     deleteLeadMutation.mutate(lead.id);
@@ -1505,7 +1505,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8">
-                  <div className="p-8 rounded-[2.5rem] bg-accent/5 border border-accent/10">
+                  <div className="p-5 md:p-8 rounded-[2.5rem] bg-accent/5 border border-accent/10">
                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                       <Sparkles className="h-5 w-5 text-accent" />
                       Lead Summary
@@ -1521,7 +1521,7 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-                  <div className="p-8 rounded-[2.5rem] bg-secondary/50 border border-border/50">
+                  <div className="p-5 md:p-8 rounded-[2.5rem] bg-secondary/50 border border-border/50">
                     <h3 className="text-lg font-bold mb-4">Quick Actions</h3>
                     <div className="grid grid-cols-2 gap-2">
                       <Button
@@ -1566,7 +1566,7 @@ export default function HomePage() {
       <Dialog open={isLeadDetailOpen} onOpenChange={setIsLeadDetailOpen}>
         <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-none glass-card p-0 z-[250] !p-0">
           {selectedLead && (
-            <div className="p-8 md:p-12">
+            <div className="p-5 md:p-12 h-full overflow-y-auto custom-scrollbar">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <div className="h-16 w-16 rounded-3xl bg-accent flex items-center justify-center text-white text-2xl font-black">
