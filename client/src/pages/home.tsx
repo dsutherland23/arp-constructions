@@ -37,7 +37,9 @@ import {
   ExternalLink,
   Calendar,
   User,
-  Hash
+  Hash,
+  Clock,
+  Send
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -434,23 +436,8 @@ export default function HomePage() {
         body: JSON.stringify(newLead),
       })
         .finally(() => {
-          // 2. Regardless of DB success, open the email client
-          // This ensures the lead is never lost even if the server is down or database is slow
-          toast({
-            title: "Transitioning to Email",
-            description: "Your email app will open to send this message. Please press 'Send' to complete your request.",
-            className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl smoke-glow",
-          });
-
-          // Delay slightly to let the user read the toast
-          setTimeout(() => {
-            window.location.href = mailtoLink;
-            // Optionally reset form step after a longer delay
-            setTimeout(() => {
-              setFormStep(0);
-              setFormData({ zip: "", name: "", email: "", phone: "", referral: "", address: "" });
-            }, 1000);
-          }, 1500);
+          // 2. Transition to Step 5 (Finish Step) instead of logic-less popup
+          setFormStep(5);
         });
     }
   };
@@ -1080,7 +1067,7 @@ export default function HomePage() {
               </div>
 
               <div className="glass-card rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-12 relative">
-                {formStep > 0 && (
+                {formStep > 0 && formStep < 5 && (
                   <button
                     onClick={handleBack}
                     className="absolute top-4 left-4 p-2 rounded-full hover:bg-secondary transition-colors text-muted-foreground hover:text-accent flex items-center gap-1 text-xs font-bold"
@@ -1227,11 +1214,79 @@ export default function HomePage() {
                         <Input id="phone" value={formData.phone} onChange={handleInputChange} required className="h-12 md:h-14 rounded-xl bg-background/50" />
                       </div>
                       <div className="py-4 text-center bg-accent/5 rounded-2xl border border-accent/10">
-                        <p className="text-sm font-medium text-accent">We'll reach out when we can serve your home.</p>
+                        <p className="text-sm font-medium text-accent">
+                          {formData.address
+                            ? "We'll reach out shortly to schedule your strategy session."
+                            : "We'll notify you as soon as we expand to your neighborhood."}
+                        </p>
                       </div>
                       <Button type="submit" size="lg" className="h-14 md:h-16 rounded-xl bg-accent font-bold hover:bg-primary">
-                        Complete Inquiry
+                        {formData.address ? "Schedule Session" : "Join Waitlist"}
                       </Button>
+                    </motion.div>
+                  )}
+                  {formStep === 5 && (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="grid gap-6 text-center py-4">
+                      <div className="h-20 w-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto text-accent mb-2">
+                        {formData.address ? <Sparkles className="h-10 w-10" /> : <Clock className="h-10 w-10" />}
+                      </div>
+
+                      <div className="space-y-2">
+                        <h3 className="text-2xl font-bold tracking-tight">
+                          {formData.address ? "One Final Step!" : "You're on the List!"}
+                        </h3>
+                        <p className="text-muted-foreground text-sm max-w-[280px] mx-auto">
+                          {formData.address
+                            ? "To secure your strategy session, please open your email app and send the pre-filled inquiry."
+                            : "We've recorded your interest. Please send the final waitlist confirmation via your email app."}
+                        </p>
+                      </div>
+
+                      <div className="p-4 bg-secondary/30 rounded-2xl border border-border/50 text-left space-y-2">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] uppercase tracking-widest text-accent font-bold">Inquiry Preview</p>
+                          <Badge variant="outline" className="text-[9px] py-0 px-1 border-accent/20 h-4">{formData.address ? "Session" : "Waitlist"}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-3 italic">
+                          "Hello, I would like to request a {formData.address ? "consultation" : "waitlist signup"}... Name: {formData.name}..."
+                        </p>
+                      </div>
+
+                      <Button
+                        onClick={() => {
+                          const leadType = formData.address ? "Consultation" : "Waitlist";
+                          const mailtoTo = "info@arpconstructionpro.org";
+                          const mailtoSubject = encodeURIComponent(`${leadType} Request – ${formData.name}`);
+                          const mailtoBody = encodeURIComponent(
+                            `Hello,\n\n` +
+                            `I would like to request a ${leadType.toLowerCase()}.\n\n` +
+                            `Name: ${formData.name}\n` +
+                            `Email: ${formData.email}\n` +
+                            `Phone: ${formData.phone || "N/A"}\n` +
+                            `Zip Code: ${formData.zip}\n` +
+                            `Address: ${formData.address || "N/A"}\n` +
+                            `Referral: ${formData.referral}\n\n` +
+                            `Message: I am interested in ${leadType === "Waitlist" ? "joining the waitlist" : "a consultation"} for my project.\n\n` +
+                            `Thank you.`
+                          );
+                          window.location.href = `mailto:${mailtoTo}?subject=${mailtoSubject}&body=${mailtoBody}`;
+                        }}
+                        size="lg"
+                        className="h-16 rounded-2xl bg-accent font-bold hover:bg-primary shadow-lg shadow-accent/20"
+                      >
+                        Open Email App & Send <Send className="ml-2 h-5 w-5" />
+                      </Button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormStep(0);
+                          setFormData({ zip: "", name: "", email: "", phone: "", referral: "", address: "" });
+                        }}
+                        className="text-xs text-muted-foreground hover:text-accent transition-colors font-medium underline underline-offset-4"
+                      >
+                        Start Over
+                      </button>
                     </motion.div>
                   )}
                 </form>
