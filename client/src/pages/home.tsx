@@ -328,28 +328,33 @@ export default function HomePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newLead),
       })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
+        .then(async res => {
+          const isJson = res.headers.get("content-type")?.includes("application/json");
+          const data = isJson ? await res.json() : null;
+
+          if (!res.ok) {
+            const errorMsg = data?.message || `Server error (${res.status})`;
+            throw new Error(errorMsg);
+          }
+
+          if (data && data.success) {
             toast({
-              title: "Strategy Session Booked",
-              description: "We've received your information and will reach out shortly.",
+              title: isWaitlistPath ? "Joined Waitlist" : "Strategy Session Booked",
+              description: isWaitlistPath
+                ? "We've added you to our waitlist and will reach out when we expand to your area."
+                : "We've received your information and will reach out shortly.",
               className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl smoke-glow",
             });
           } else {
-            toast({
-              title: "Submission Error",
-              description: data.message || "Failed to send inquiry. Please try again or call us.",
-              variant: "destructive"
-            });
+            throw new Error(data?.message || "Failed to send inquiry");
           }
         })
         .catch(err => {
           console.error("Form submission error details:", err);
           const errorMsg = err instanceof Error ? err.message : String(err);
           toast({
-            title: "Network Error",
-            description: `Could not connect to the server (${errorMsg}). Please check your connection or try again later.`,
+            title: "Submission Error",
+            description: `Error: ${errorMsg}. Please try again later or call us.`,
             variant: "destructive"
           });
         });
