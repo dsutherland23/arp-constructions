@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Lead } from "@shared/schema";
 import {
   ArrowUpRight,
   ChevronRight,
@@ -24,7 +27,8 @@ import {
   Layers,
   Layout,
   Tv,
-  Table
+  Table,
+  Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -147,11 +151,38 @@ export default function HomePage() {
   const [adminAuth, setAdminAuth] = useState({ user: "", pass: "" });
   const [adminAvailable, setAdminAvailable] = useState(true);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
-  const [submissions, setSubmissions] = useState<any[]>([
-    { name: "Sarah Miller", type: "Kitchen", status: "Urgent", date: "2m ago", zip: "10001", id: 1 },
-    { name: "John Stevens", type: "Plumbing", status: "New", date: "45m ago", zip: "11201", id: 2 },
-    { name: "Elena Rodriguez", type: "Bathroom", status: "New", date: "2h ago", zip: "10451", id: 3 }
-  ]);
+
+  // Admin Queries & Mutations
+  const { data: leads = [], isLoading: isLoadingLeads } = useQuery<Lead[]>({
+    queryKey: ["/api/admin/leads"],
+    enabled: isLoggedIn,
+  });
+
+  const deleteLeadMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/admin/leads/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/leads"] });
+      toast({ title: "Lead removed" });
+    },
+    onError: () => {
+      toast({ title: "Failed to delete lead", variant: "destructive" });
+    },
+  });
+
+  // Define total leads count and NY qualified count for Command Center
+  const totalLeads = leads.length;
+  const nyLeads = leads.filter(l => NY_ZIP_PREFIXES.some(prefix => l.zip.startsWith(prefix))).length;
+
+  useEffect(() => {
+    fetch("/api/admin/check")
+      .then(res => res.json())
+      .then(data => {
+        if (data.isLoggedIn) setIsLoggedIn(true);
+      })
+      .catch(err => console.error("Auth check failed:", err));
+  }, []);
 
   const handleLogoClick = () => {
     setLogoClicks(prev => {
@@ -167,13 +198,38 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   };
 
-  const handleAdminLogin = (e: React.FormEvent) => {
+  const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminAuth.user === "Admin" && adminAuth.pass === "RicardoPecco") {
-      setIsLoggedIn(true);
-      toast({ title: "Welcome back, Ricardo." });
-    } else {
-      toast({ title: "Access Denied", variant: "destructive" });
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: adminAuth.user,
+          password: adminAuth.pass
+        })
+      });
+
+      if (response.ok) {
+        setIsLoggedIn(true);
+        toast({ title: "Welcome back." });
+      } else {
+        toast({ title: "Access Denied", variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: "Login failed", variant: "destructive" });
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/logout", { method: "POST" });
+      setIsLoggedIn(false);
+      setAdminAuth({ user: "", pass: "" });
+      toast({ title: "Logged out successfully" });
+    } catch (err) {
+      setIsLoggedIn(false);
+      setAdminAuth({ user: "", pass: "" });
     }
   };
 
@@ -239,8 +295,7 @@ export default function HomePage() {
       desc: chatLead.desc,
       id: Date.now()
     };
-    setSubmissions(prev => [newLead, ...prev]);
-
+    // Lead will be saved by server (implementing chat lead saving would be a next step)
     setChatStep(1);
     if (!adminAvailable) {
       toast({
@@ -338,6 +393,7 @@ export default function HomePage() {
           }
 
           if (data && data.success) {
+            const isWaitlistPath = leadType === "Waitlist";
             toast({
               title: isWaitlistPath ? "Joined Waitlist" : "Strategy Session Booked",
               description: isWaitlistPath
@@ -359,7 +415,7 @@ export default function HomePage() {
           });
         });
 
-      setSubmissions(prev => [newLead, ...prev]);
+      // Lead will be saved to DB by server and fetched by admin portal query
       setFormStep(0);
       setFormData({ zip: "", name: "", email: "", phone: "", referral: "", address: "" });
     }
@@ -1332,28 +1388,44 @@ export default function HomePage() {
                     <Badge variant="outline" className="rounded-full">Real-time</Badge>
                   </div>
                   <div className="grid gap-4">
-                    {submissions.map((lead, i) => (
-                      <div key={lead.id} className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group">
-                        <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
-                            {lead.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="font-bold">{lead.name}</p>
-                            <p className="text-xs text-muted-foreground">{lead.type} • {lead.zip}</p>
-                          </div>
-                        </div>
-                        <div className="text-right flex items-center gap-6">
-                          <div>
-                            <p className={`text-xs font-bold ${lead.status === 'Urgent' ? 'text-red-500' : 'text-accent'}`}>{lead.status}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{lead.date}</p>
-                          </div>
-                          <Button variant="ghost" size="icon" className="rounded-xl opacity-0 group-hover:opacity-100">
-                            <ChevronRight className="h-5 w-5" />
-                          </Button>
-                        </div>
+                    {isLoadingLeads ? (
+                      <div className="p-12 text-center text-muted-foreground">Loading leads...</div>
+                    ) : leads.length === 0 ? (
+                      <div className="p-12 text-center text-muted-foreground border-2 border-dashed border-border/50 rounded-3xl">
+                        No leads received yet.
                       </div>
-                    ))}
+                    ) : (
+                      leads.map((lead) => (
+                        <div key={lead.id} className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group">
+                          <div className="flex items-center gap-4">
+                            <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
+                              {lead.name.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="font-bold">{lead.name}</p>
+                              <p className="text-xs text-muted-foreground">{lead.type} • {lead.zip}</p>
+                            </div>
+                          </div>
+                          <div className="text-right flex items-center gap-6">
+                            <div>
+                              <p className={`text-xs font-bold ${lead.status === 'Urgent' ? 'text-red-500' : 'text-accent'}`}>{lead.status}</p>
+                              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                                {new Date(lead.createdAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="rounded-xl opacity-0 group-hover:opacity-100 text-destructive hover:bg-destructive/10"
+                              onClick={() => deleteLeadMutation.mutate(lead.id)}
+                              disabled={deleteLeadMutation.isPending}
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
 
@@ -1365,11 +1437,11 @@ export default function HomePage() {
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 rounded-2xl bg-white/50 shadow-sm border border-border/50">
-                        <p className="text-2xl font-black text-accent">14</p>
+                        <p className="text-2xl font-black text-accent">{totalLeads}</p>
                         <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">Total Active</p>
                       </div>
                       <div className="p-4 rounded-2xl bg-white/50 shadow-sm border border-border/50">
-                        <p className="text-2xl font-black text-green-500">6</p>
+                        <p className="text-2xl font-black text-green-500">{nyLeads}</p>
                         <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">NY Qualified</p>
                       </div>
                     </div>
@@ -1380,7 +1452,7 @@ export default function HomePage() {
                       <Button variant="outline" className="rounded-xl h-10 text-xs">Export CSV</Button>
                       <Button variant="outline" className="rounded-xl h-10 text-xs">Clear Archive</Button>
                       <Button variant="outline" className="rounded-xl h-10 text-xs">Sync DB</Button>
-                      <Button onClick={() => setIsLoggedIn(false)} variant="outline" className="rounded-xl h-10 text-xs text-orange-500 hover:text-orange-600">Logout</Button>
+                      <Button onClick={handleLogout} variant="outline" className="rounded-xl h-10 text-xs text-orange-500 hover:text-orange-600">Logout</Button>
                     </div>
                   </div>
                 </div>

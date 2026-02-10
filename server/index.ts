@@ -2,6 +2,10 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import session from "express-session";
+import memoryStore from "memorystore";
+
+const MemoryStore = memoryStore(session);
 
 const app = express();
 const httpServer = createServer(app);
@@ -9,6 +13,12 @@ const httpServer = createServer(app);
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
+  }
+}
+
+declare module "express-session" {
+  interface SessionData {
+    isAdmin: boolean;
   }
 }
 
@@ -21,6 +31,22 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+
+app.use(
+  session({
+    cookie: {
+      maxAge: 86400000,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax"
+    },
+    store: new MemoryStore({
+      checkPeriod: 86400000
+    }),
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET || "arp-construction-secret-key-2026",
+  })
+);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {

@@ -59,12 +59,30 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Missing required fields" });
       }
 
+      // Save lead to storage
+      try {
+        await storage.createLead({
+          name,
+          email,
+          phone,
+          zip: zip || "N/A",
+          referral: referral || "Website",
+          address: address || null,
+          type: leadType,
+          status: "New"
+        });
+        console.log(`[API] Lead saved to storage for ${name}`);
+      } catch (dbError) {
+        console.error("[API] Failed to save lead to storage:", dbError);
+        // We continue anyway to send the email if possible
+      }
+
       if (!smtpUser) {
         console.error("[SMTP] Error: SMTP_USER is not defined in environment variables");
         return res.status(500).json({ message: "Email service not configured correctly" });
       }
 
-      if (!transporter!) {
+      if (!transporter) {
         console.error("[SMTP] Error: Transporter failed to initialize");
         return res.status(500).json({ message: "Email service failed to initialize. Check server logs." });
       }
@@ -86,7 +104,7 @@ export async function registerRoutes(
           Phone: ${phone}
           Zip Code: ${zip}
           Referral: ${referral}
-          ${address ? `Address: ${address}` : "Address: Not provided (Outside service area)"}
+          ${address ? `Address: ${address}` : "Address: Not provided"}
           
           Type: ${leadType}
         `,
@@ -97,7 +115,7 @@ export async function registerRoutes(
           <p><strong>Phone:</strong> ${phone}</p>
           <p><strong>Zip Code:</strong> ${zip}</p>
           <p><strong>Referral:</strong> ${referral}</p>
-          <p><strong>Address:</strong> ${address || "<em>Not provided (Outside service area)</em>"}</p>
+          <p><strong>Address:</strong> ${address || "<em>Not provided</em>"}</p>
           <p><strong>Source:</strong> Website Inquiry (${leadType})</p>
         `,
       };
@@ -115,6 +133,57 @@ export async function registerRoutes(
         stack: error.stack
       });
       res.status(500).json({ message: "Failed to send inquiry. Please check server logs." });
+    }
+  });
+
+  // Admin Authentication
+  app.post("/api/admin/login", (req, res) => {
+    const { username, password } = req.body;
+    const adminUser = process.env.ADMIN_USER || "Admin";
+    const adminPass = process.env.ADMIN_PASS || "RicardoPecco";
+
+    if (username === adminUser && password === adminPass) {
+      req.session.isAdmin = true;
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
+  });
+
+  app.post("/api/admin/logout", (req, res) => {
+    req.session.isAdmin = false;
+    res.json({ success: true });
+  });
+
+  app.get("/api/admin/check", (req, res) => {
+    res.json({ isLoggedIn: !!req.session.isAdmin });
+  });
+
+  // Admin Middleware
+  const requireAdmin = (req: any, res: any, next: any) => {
+    if (req.session.isAdmin) {
+      next();
+    } else {
+      res.status(403).json({ message: "Forbidden" });
+    }
+  };
+
+  // Admin Routes
+  app.get("/api/admin/leads", requireAdmin, async (req, res) => {
+    try {
+      const leads = await storage.getLeads();
+      res.json(leads);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch leads" });
+    }
+  });
+
+  app.delete("/api/admin/leads/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteLead(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete lead" });
     }
   });
 
