@@ -146,6 +146,8 @@ export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminAuth, setAdminAuth] = useState({ user: "", pass: "" });
   const [adminAvailable, setAdminAvailable] = useState(true);
+  const [adminAvailable, setAdminAvailable] = useState(true);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [submissions, setSubmissions] = useState<any[]>([
     { name: "Sarah Miller", type: "Kitchen", status: "Urgent", date: "2m ago", zip: "10001", id: 1 },
     { name: "John Stevens", type: "Plumbing", status: "New", date: "45m ago", zip: "11201", id: 2 },
@@ -747,7 +749,10 @@ export default function HomePage() {
                   <div className="grid gap-8 sm:grid-cols-2">
                     {projects.map((project, i) => (
                       <div key={i} className="group space-y-4">
-                        <div className="aspect-video overflow-hidden rounded-3xl bg-secondary/30 relative">
+                        <div
+                          className="aspect-video overflow-hidden rounded-3xl bg-secondary/30 relative cursor-zoom-in"
+                          onClick={() => setZoomedImage(project.image)}
+                        >
                           <img
                             src={project.image}
                             alt={project.title}
@@ -788,7 +793,11 @@ export default function HomePage() {
             className="flex gap-4 md:gap-8 px-4"
           >
             {[...projects, ...projects].map((project, i) => (
-              <div key={i} className="group relative h-[350px] md:h-[450px] w-[280px] md:w-[500px] shrink-0 overflow-hidden rounded-[2.5rem] bg-white/5">
+              <div
+                key={i}
+                className="group relative h-[350px] md:h-[450px] w-[280px] md:w-[500px] shrink-0 overflow-hidden rounded-[2.5rem] bg-white/5 cursor-zoom-in"
+                onClick={() => setZoomedImage(project.image)}
+              >
                 <img
                   src={project.image}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -1332,6 +1341,32 @@ export default function HomePage() {
           )}
         </DialogContent>
       </Dialog>
+      <AnimatePresence>
+        {zoomedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setZoomedImage(null)}
+            className="fixed inset-0 z-[250] flex items-center justify-center bg-black/90 p-4 cursor-zoom-out"
+          >
+            <motion.img
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              src={zoomedImage}
+              alt="Zoomed project"
+              className="max-h-[90vh] max-w-[90vw] rounded-3xl object-contain"
+            />
+            <button
+              onClick={() => setZoomedImage(null)}
+              className="absolute top-6 right-6 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
