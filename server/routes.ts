@@ -50,8 +50,9 @@ export async function registerRoutes(
 
   app.post("/api/contact", async (req, res) => {
     try {
-      const { name, email, phone, zip, referral, address } = req.body;
-      console.log(`[API] Received contact inquiry from ${name} (${email})`);
+      const { name, email, phone, zip, referral, address, type } = req.body;
+      const leadType = type || "Consultation";
+      console.log(`[API] Received ${leadType} inquiry from ${name} (${email})`);
 
       if (!name || !email || !phone) {
         console.warn("[API] Submission rejected: Missing required fields");
@@ -68,35 +69,43 @@ export async function registerRoutes(
         return res.status(500).json({ message: "Email service failed to initialize. Check server logs." });
       }
 
+      const isWaitlist = leadType === "Waitlist";
+      const subject = isWaitlist
+        ? `New Waitlist Signup: ${name} (${zip})`
+        : `New Project Inquiry: ${name}`;
+
       const mailOptions = {
         from: smtpUser,
         to: "info@arpconstructionpro.org",
-        subject: `New Project Inquiry: ${name}`,
+        subject: subject,
         text: `
-          New inquiry received from website:
+          New ${leadType.toLowerCase()} received from website:
           
           Name: ${name}
           Email: ${email}
           Phone: ${phone}
           Zip Code: ${zip}
           Referral: ${referral}
-          Address: ${address || "Not provided"}
+          ${address ? `Address: ${address}` : "Address: Not provided (Outside service area)"}
+          
+          Type: ${leadType}
         `,
         html: `
-          <h3>New Project Inquiry</h3>
+          <h3>New ${leadType}</h3>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Phone:</strong> ${phone}</p>
           <p><strong>Zip Code:</strong> ${zip}</p>
           <p><strong>Referral:</strong> ${referral}</p>
-          <p><strong>Address:</strong> ${address || "Not provided"}</p>
+          <p><strong>Address:</strong> ${address || "<em>Not provided (Outside service area)</em>"}</p>
+          <p><strong>Source:</strong> Website Inquiry (${leadType})</p>
         `,
       };
 
-      console.log("[SMTP] Attempting to send email...");
+      console.log(`[SMTP] Attempting to send ${leadType.toLowerCase()} email...`);
       const info = await transporter.sendMail(mailOptions);
       console.log("[SMTP] Email sent successfully:", info.messageId);
-      res.json({ success: true, message: "Inquiry sent successfully" });
+      res.json({ success: true, message: `${leadType} sent successfully` });
     } catch (error: any) {
       console.error("[SMTP] Email sending error details:", {
         message: error.message,

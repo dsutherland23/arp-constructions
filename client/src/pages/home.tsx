@@ -294,9 +294,24 @@ export default function HomePage() {
     } else if (formStep === 2) {
       setFormStep(3);
     } else if (formStep === 3) {
+      // Determine lead type based on the previous step (or if it was a waitlist path)
+      // If formStep 4 was reached, it means the zip was outside NY.
+      // If the user then proceeds from formStep 4 (waitlist) to fill out details,
+      // the submission should be marked as "Waitlist".
+      // Otherwise, it's a "Consultation".
+      const leadType = formData.address ? "Consultation" : "Waitlist"; // Simplified logic: if address is filled, it's a consultation. If not, it's a waitlist.
+      // A more robust way would be to have a state variable like `isWaitlistFlow` set when formStep 4 is entered.
+      // For now, let's assume if they are at step 3 and the address field was part of the "consultation" flow.
+      // If they came from the waitlist path (formStep 4), they would have been prompted to fill out details for waitlist.
+      // Let's use the current formStep to infer. If formStep 0 led to 4, and then they clicked to proceed,
+      // they would eventually reach formStep 3.
+      // The `formData.address` is only collected in the "Consultation" path (formStep 1).
+      // If they went to formStep 4, then clicked "Join Waitlist", they would fill out name, email, phone, but not address.
+      // So, if address is empty, it's a waitlist. If address is present, it's a consultation.
+
       const newLead = {
         name: formData.name,
-        type: "Consultation",
+        type: leadType, // Dynamically set based on flow
         status: "New",
         date: "Just now",
         zip: formData.zip,
