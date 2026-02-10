@@ -1257,18 +1257,29 @@ export default function HomePage() {
                           const leadType = formData.address ? "Consultation" : "Waitlist";
                           const mailtoTo = "info@arpconstructionpro.org";
                           const mailtoSubject = encodeURIComponent(`${leadType} Request – ${formData.name}`);
-                          const mailtoBody = encodeURIComponent(
-                            `Hello,\n\n` +
-                            `I would like to request a ${leadType.toLowerCase()}.\n\n` +
+                          const isWaitlist = leadType === "Waitlist";
+                          const mailtoBodyText = isWaitlist
+                            ? `Hello,\n\n` +
+                            `I am currently outside the primary service area, but I would like to join the ARP Construction waitlist for future projects.\n\n` +
                             `Name: ${formData.name}\n` +
                             `Email: ${formData.email}\n` +
                             `Phone: ${formData.phone || "N/A"}\n` +
                             `Zip Code: ${formData.zip}\n` +
-                            `Address: ${formData.address || "N/A"}\n` +
                             `Referral: ${formData.referral}\n\n` +
-                            `Message: I am interested in ${leadType === "Waitlist" ? "joining the waitlist" : "a consultation"} for my project.\n\n` +
+                            `Message: Please notify me as soon as ARP expands its services to my neighborhood.\n\n` +
                             `Thank you.`
-                          );
+                            : `Hello,\n\n` +
+                            `I would like to request a professional strategy session for my project.\n\n` +
+                            `Name: ${formData.name}\n` +
+                            `Email: ${formData.email}\n` +
+                            `Phone: ${formData.phone || "N/A"}\n` +
+                            `Project Address: ${formData.address || "N/A"}\n` +
+                            `Zip Code: ${formData.zip}\n` +
+                            `Referral: ${formData.referral}\n\n` +
+                            `Message: I am interested in discussing a high-end renovation project with the ARP team.\n\n` +
+                            `Thank you.`;
+
+                          const mailtoBody = encodeURIComponent(mailtoBodyText);
                           window.location.href = `mailto:${mailtoTo}?subject=${mailtoSubject}&body=${mailtoBody}`;
                         }}
                         size="lg"

@@ -99,28 +99,26 @@ export async function registerRoutes(
         from: smtpUser,
         to: "info@arpconstructionpro.org",
         subject: subject,
-        text: `
-          New ${leadType.toLowerCase()} received from website:
-          
-          Name: ${name}
-          Email: ${email}
-          Phone: ${phone}
-          Zip Code: ${zip}
-          Referral: ${referral}
-          ${address ? `Address: ${address}` : "Address: Not provided"}
-          
-          Type: ${leadType}
-        `,
-        html: `
-          <h3>New ${leadType}</h3>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Phone:</strong> ${phone}</p>
-          <p><strong>Zip Code:</strong> ${zip}</p>
-          <p><strong>Referral:</strong> ${referral}</p>
-          <p><strong>Address:</strong> ${address || "<em>Not provided</em>"}</p>
-          <p><strong>Source:</strong> Website Inquiry (${leadType})</p>
-        `,
+        text: isWaitlist
+          ? `Waitlist Entry - ${name}\n\nUser is outside the current service area but wants to be notified of expansion.\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nZip Code: ${zip}\nReferral: ${referral}`
+          : `Consultation Request - ${name}\n\nUser has requested a professional strategy session.\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nAddress: ${address || "N/A"}\nZip Code: ${zip}\nReferral: ${referral}`,
+        html: isWaitlist
+          ? `<h3>New Waitlist Signup</h3>
+             <p><strong>Note:</strong> User is outside the current service area.</p>
+             <p><strong>Name:</strong> ${name}</p>
+             <p><strong>Email:</strong> ${email}</p>
+             <p><strong>Phone:</strong> ${phone}</p>
+             <p><strong>Zip Code:</strong> ${zip}</p>
+             <p><strong>Referral:</strong> ${referral}</p>
+             <p><em>This user wants to be notified when services expand to their area.</em></p>`
+          : `<h3>New Consultation Request</h3>
+             <p><strong>Name:</strong> ${name}</p>
+             <p><strong>Email:</strong> ${email}</p>
+             <p><strong>Phone:</strong> ${phone}</p>
+             <p><strong>Address:</strong> ${address || "<em>Not provided</em>"}</p>
+             <p><strong>Zip Code:</strong> ${zip}</p>
+             <p><strong>Referral:</strong> ${referral}</p>
+             <p><strong>Source:</strong> Website Strategy Session Inquiry</p>`,
       };
 
       console.log(`[SMTP] Attempting to send ${leadType.toLowerCase()} email...`);
