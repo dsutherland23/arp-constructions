@@ -146,7 +146,6 @@ export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminAuth, setAdminAuth] = useState({ user: "", pass: "" });
   const [adminAvailable, setAdminAvailable] = useState(true);
-  const [adminAvailable, setAdminAvailable] = useState(true);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [submissions, setSubmissions] = useState<any[]>([
     { name: "Sarah Miller", type: "Kitchen", status: "Urgent", date: "2m ago", zip: "10001", id: 1 },
