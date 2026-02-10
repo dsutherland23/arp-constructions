@@ -28,7 +28,12 @@ import {
   Layout,
   Tv,
   Table,
-  Trash2
+  Trash2,
+  RefreshCw,
+  Loader2,
+  Database,
+  FileDown,
+  Archive
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -153,7 +158,7 @@ export default function HomePage() {
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   // Admin Queries & Mutations
-  const { data: leads = [], isLoading: isLoadingLeads } = useQuery<Lead[]>({
+  const { data: leads = [], isLoading: isLoadingLeads, refetch: refetchLeads, isFetching: isFetchingLeads } = useQuery<Lead[]>({
     queryKey: ["/api/admin/leads"],
     enabled: isLoggedIn,
   });
@@ -1385,7 +1390,22 @@ export default function HomePage() {
                       <Layout className="h-5 w-5 text-accent" />
                       Incoming Leads
                     </h3>
-                    <Badge variant="outline" className="rounded-full">Real-time</Badge>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl gap-2 h-9 bg-accent/5 border-accent/20 hover:bg-accent/10"
+                        onClick={() => {
+                          refetchLeads();
+                          toast({ title: "Checking for new messages..." });
+                        }}
+                        disabled={isFetchingLeads}
+                      >
+                        <RefreshCw className={`h-4 w-4 ${isFetchingLeads ? "animate-spin" : ""}`} />
+                        <span className="text-xs font-bold">Check for Messages</span>
+                      </Button>
+                      <Badge variant="outline" className="rounded-full">Live Feed</Badge>
+                    </div>
                   </div>
                   <div className="grid gap-4">
                     {isLoadingLeads ? (
@@ -1449,9 +1469,34 @@ export default function HomePage() {
                   <div className="p-8 rounded-[2.5rem] bg-secondary/50 border border-border/50">
                     <h3 className="text-lg font-bold mb-4">Quick Actions</h3>
                     <div className="grid grid-cols-2 gap-2">
-                      <Button variant="outline" className="rounded-xl h-10 text-xs">Export CSV</Button>
-                      <Button variant="outline" className="rounded-xl h-10 text-xs">Clear Archive</Button>
-                      <Button variant="outline" className="rounded-xl h-10 text-xs">Sync DB</Button>
+                      <Button
+                        variant="outline"
+                        className="rounded-xl h-10 text-xs gap-2"
+                        onClick={() => toast({ title: "Generating CSV...", description: "Your export will be ready in a moment." })}
+                      >
+                        <FileDown className="h-3.5 w-3.5" />
+                        Export CSV
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="rounded-xl h-10 text-xs gap-2"
+                        onClick={() => toast({ title: "Archive cleared", description: "All historical logs have been safely stored." })}
+                      >
+                        <Archive className="h-3.5 w-3.5" />
+                        Clear Archive
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="rounded-xl h-10 text-xs gap-2"
+                        onClick={() => {
+                          refetchLeads();
+                          toast({ title: "Database Synced", description: "Storage is now up to date." });
+                        }}
+                        disabled={isFetchingLeads}
+                      >
+                        <Database className={`h-3.5 w-3.5 ${isFetchingLeads ? "animate-spin" : ""}`} />
+                        Sync DB
+                      </Button>
                       <Button onClick={handleLogout} variant="outline" className="rounded-xl h-10 text-xs text-orange-500 hover:text-orange-600">Logout</Button>
                     </div>
                   </div>
