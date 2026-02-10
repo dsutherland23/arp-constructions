@@ -33,7 +33,11 @@ import {
   Loader2,
   Database,
   FileDown,
-  Archive
+  Archive,
+  ExternalLink,
+  Calendar,
+  User,
+  Hash
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -107,6 +111,8 @@ const services = [
   }
 ];
 
+const NY_ZIP_PREFIXES = ["10", "11", "12", "13", "14"]; // NY State range
+
 const detailedServices = [
   {
     title: "Plumbing Handyman Services",
@@ -156,6 +162,8 @@ export default function HomePage() {
   const [adminAuth, setAdminAuth] = useState({ user: "", pass: "" });
   const [adminAvailable, setAdminAvailable] = useState(true);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isLeadDetailOpen, setIsLeadDetailOpen] = useState(false);
 
   // Admin Queries & Mutations
   const { data: leads = [], isLoading: isLoadingLeads, refetch: refetchLeads, isFetching: isFetchingLeads } = useQuery<Lead[]>({
@@ -336,7 +344,6 @@ export default function HomePage() {
     address: ""
   });
 
-  const NY_ZIP_PREFIXES = ["10", "11", "12", "13", "14"]; // NY State range
 
   const handleFormNext = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1416,7 +1423,14 @@ export default function HomePage() {
                       </div>
                     ) : (
                       leads.map((lead) => (
-                        <div key={lead.id} className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group">
+                        <div
+                          key={lead.id}
+                          className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group cursor-pointer"
+                          onClick={() => {
+                            setSelectedLead(lead);
+                            setIsLeadDetailOpen(true);
+                          }}
+                        >
                           <div className="flex items-center gap-4">
                             <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
                               {lead.name.charAt(0)}
@@ -1437,7 +1451,10 @@ export default function HomePage() {
                               variant="ghost"
                               size="icon"
                               className="rounded-xl opacity-0 group-hover:opacity-100 text-destructive hover:bg-destructive/10"
-                              onClick={() => deleteLeadMutation.mutate(lead.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteLeadMutation.mutate(lead.id);
+                              }}
                               disabled={deleteLeadMutation.isPending}
                             >
                               <Trash2 className="h-5 w-5" />
@@ -1501,6 +1518,102 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Lead Detail Dialog */}
+      <Dialog open={isLeadDetailOpen} onOpenChange={setIsLeadDetailOpen}>
+        <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-none glass-card p-0 z-[250] !p-0">
+          {selectedLead && (
+            <div className="p-8 md:p-12">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-3xl bg-accent flex items-center justify-center text-white text-2xl font-black">
+                    {selectedLead.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-black tracking-tighter leading-tight">{selectedLead.name}</h2>
+                    <Badge variant="outline" className="rounded-full mt-1 border-accent/20 bg-accent/5 text-accent">
+                      {selectedLead.type} Inquiry
+                    </Badge>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full h-12 w-12"
+                  onClick={() => setIsLeadDetailOpen(false)}
+                >
+                  <X className="h-6 w-6" />
+                </Button>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 mb-10">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                    <Mail className="h-5 w-5 text-accent" />
+                    <div className="min-w-0">
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Email</p>
+                      <a href={`mailto:${selectedLead.email}`} className="font-bold hover:text-accent transition-colors truncate block">{selectedLead.email}</a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                    <Phone className="h-5 w-5 text-accent" />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Phone</p>
+                      <a href={`tel:${selectedLead.phone}`} className="font-bold hover:text-accent transition-colors">{selectedLead.phone}</a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                    <MapPin className="h-5 w-5 text-accent" />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Location</p>
+                      <p className="font-bold">{selectedLead.zip} {selectedLead.address ? `• ${selectedLead.address}` : ""}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                    <Calendar className="h-5 w-5 text-accent" />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Received On</p>
+                      <p className="font-bold">{new Date(selectedLead.createdAt).toLocaleString()}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                    <Sparkles className="h-5 w-5 text-accent" />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Referral Source</p>
+                      <p className="font-bold">{selectedLead.referral}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                    <Loader2 className={`h-5 w-5 ${selectedLead.status === 'New' ? 'text-green-500' : 'text-accent'}`} />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Current Status</p>
+                      <p className="font-bold">{selectedLead.status}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button className="flex-1 h-14 rounded-2xl bg-accent text-white font-bold gap-2 shadow-xl shadow-accent/20" asChild>
+                  <a href={`mailto:${selectedLead.email}`}>
+                    <Mail className="h-5 w-5" />
+                    Reply via Email
+                  </a>
+                </Button>
+                <Button variant="outline" className="flex-1 h-14 rounded-2xl border-2 font-bold gap-2" asChild>
+                  <a href={`tel:${selectedLead.phone}`}>
+                    <Phone className="h-5 w-5" />
+                    Call Client
+                  </a>
+                </Button>
               </div>
             </div>
           )}
