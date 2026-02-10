@@ -11,6 +11,7 @@ export interface IStorage {
   getLeads(): Promise<Lead[]>;
   createLead(lead: InsertLead): Promise<Lead>;
   deleteLead(id: string): Promise<void>;
+  updateLeadStatus(id: string, status: string): Promise<Lead>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -45,6 +46,19 @@ export class DatabaseStorage implements IStorage {
 
   async deleteLead(id: string): Promise<void> {
     await db.delete(leads).where(eq(leads.id, id));
+  }
+
+  async updateLeadStatus(id: string, status: string): Promise<Lead> {
+    const [lead] = await db.update(leads)
+      .set({ status })
+      .where(eq(leads.id, id))
+      .returning();
+
+    if (!lead) {
+      throw new Error(`Lead with id ${id} not found`);
+    }
+
+    return lead;
   }
 }
 

@@ -187,6 +187,16 @@ export async function registerRoutes(
     }
   });
 
+  app.patch("/api/admin/leads/:id/status", requireAdmin, async (req, res) => {
+    try {
+      const { status } = req.body;
+      const lead = await storage.updateLeadStatus(req.params.id, status);
+      res.json(lead);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update lead status" });
+    }
+  });
+
   // put application routes here
   // prefix all routes with /api
 
