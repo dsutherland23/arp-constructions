@@ -302,15 +302,43 @@ export default function HomePage() {
         zip: formData.zip,
         phone: formData.phone,
         email: formData.email,
+        referral: formData.referral,
+        address: formData.address,
         id: Date.now()
       };
-      setSubmissions(prev => [newLead, ...prev]);
 
-      toast({
-        title: "Strategy Session Booked",
-        description: "We've received your information and will reach out shortly.",
-        className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl",
-      });
+      // Send to backend
+      fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newLead),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            toast({
+              title: "Strategy Session Booked",
+              description: "We've received your information and will reach out shortly.",
+              className: "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-[400px] w-[90%] glass-card border-accent shadow-2xl smoke-glow",
+            });
+          } else {
+            toast({
+              title: "Submission Error",
+              description: data.message || "Failed to send inquiry. Please try again or call us.",
+              variant: "destructive"
+            });
+          }
+        })
+        .catch(err => {
+          console.error("Form submission error:", err);
+          toast({
+            title: "Network Error",
+            description: "Could not connect to the server. Please check your connection and try again.",
+            variant: "destructive"
+          });
+        });
+
+      setSubmissions(prev => [newLead, ...prev]);
       setFormStep(0);
       setFormData({ zip: "", name: "", email: "", phone: "", referral: "", address: "" });
     }
