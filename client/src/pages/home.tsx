@@ -1363,7 +1363,7 @@ export default function HomePage() {
                 <DialogTitle className="text-3xl font-bold">Admin Portal</DialogTitle>
                 <p className="text-muted-foreground">Authorized access only.</p>
               </DialogHeader>
-              <form onSubmit={handleAdminLogin} className="space-y-6 max-w-sm mx-auto">
+              <form onSubmit={handleAdminLogin} className="space-y-6 w-full max-w-sm mx-auto">
                 <div className="space-y-2">
                   <Label>Username</Label>
                   <Input
@@ -1393,7 +1393,7 @@ export default function HomePage() {
                   <h2 className="text-4xl font-bold tracking-tighter">Command Center</h2>
                   <p className="text-muted-foreground">Managing ARP Excellence.</p>
                 </div>
-                <div className="flex items-center gap-4 bg-secondary/50 p-2 rounded-2xl border border-border/50">
+                <div className="flex items-center justify-between sm:justify-start gap-4 bg-secondary/50 p-2 rounded-2xl border border-border/50 w-full md:w-auto">
                   <span className="text-sm font-bold ml-2">Presence:</span>
                   <div className="flex gap-1 bg-background/50 p-1 rounded-xl">
                     <button
@@ -1414,12 +1414,12 @@ export default function HomePage() {
 
               <div className="grid gap-8">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <h3 className="text-xl font-bold flex items-center gap-2">
                       <Layout className="h-5 w-5 text-accent" />
                       Incoming Leads
                     </h3>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                       <Button
                         variant="outline"
                         size="sm"
@@ -1567,13 +1567,13 @@ export default function HomePage() {
         <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-none glass-card p-0 z-[250] !p-0">
           {selectedLead && (
             <div className="p-5 md:p-12 h-full overflow-y-auto custom-scrollbar">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-3xl bg-accent flex items-center justify-center text-white text-2xl font-black">
+              <div className="flex items-start justify-between mb-8 gap-4">
+                <div className="flex items-center gap-4 min-w-0 flex-1">
+                  <div className="h-16 w-16 rounded-3xl bg-accent flex items-center justify-center text-white text-2xl font-black shrink-0">
                     {selectedLead.name.charAt(0)}
                   </div>
-                  <div>
-                    <h2 className="text-3xl font-black tracking-tighter leading-tight">{selectedLead.name}</h2>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-2xl md:text-3xl font-black tracking-tighter leading-tight break-words">{selectedLead.name}</h2>
                     <Badge variant="outline" className="rounded-full mt-1 border-accent/20 bg-accent/5 text-accent">
                       {selectedLead.type} Inquiry
                     </Badge>
