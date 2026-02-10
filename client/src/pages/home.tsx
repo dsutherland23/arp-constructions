@@ -52,6 +52,12 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
 // Assets
@@ -164,11 +170,27 @@ export default function HomePage() {
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isLeadDetailOpen, setIsLeadDetailOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
   // Admin Queries & Mutations
   const { data: leads = [], isLoading: isLoadingLeads, refetch: refetchLeads, isFetching: isFetchingLeads } = useQuery<Lead[]>({
     queryKey: ["/api/admin/leads"],
     enabled: isLoggedIn,
+  });
+
+  const updateLeadStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const res = await apiRequest("PATCH", `/api/admin/leads/${id}/status`, { status });
+      return res.json();
+    },
+    onSuccess: (updatedLead) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/leads"] });
+      setSelectedLead(updatedLead);
+      toast({ title: "Status updated", description: `Lead moved to ${updatedLead.status}` });
+    },
+    onError: () => {
+      toast({ title: "Failed to update status", variant: "destructive" });
+    },
   });
 
   const deleteLeadMutation = useMutation({
@@ -1414,56 +1436,72 @@ export default function HomePage() {
                       <Badge variant="outline" className="rounded-full">Live Feed</Badge>
                     </div>
                   </div>
-                  <div className="grid gap-4">
-                    {isLoadingLeads ? (
-                      <div className="p-12 text-center text-muted-foreground">Loading leads...</div>
-                    ) : leads.length === 0 ? (
-                      <div className="p-12 text-center text-muted-foreground border-2 border-dashed border-border/50 rounded-3xl">
-                        No leads received yet.
-                      </div>
-                    ) : (
-                      leads.map((lead) => (
-                        <div
-                          key={lead.id}
-                          className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group cursor-pointer"
-                          onClick={() => {
-                            setSelectedLead(lead);
-                            setIsLeadDetailOpen(true);
-                          }}
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
-                              {lead.name.charAt(0)}
-                            </div>
-                            <div>
-                              <p className="font-bold">{lead.name}</p>
-                              <p className="text-xs text-muted-foreground">{lead.type} • {lead.zip}</p>
-                            </div>
-                          </div>
-                          <div className="text-right flex items-center gap-6">
-                            <div>
-                              <p className={`text-xs font-bold ${lead.status === 'Urgent' ? 'text-red-500' : 'text-accent'}`}>{lead.status}</p>
-                              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                                {new Date(lead.createdAt).toLocaleDateString()}
-                              </p>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="rounded-xl opacity-0 group-hover:opacity-100 text-destructive hover:bg-destructive/10"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteLeadMutation.mutate(lead.id);
-                              }}
-                              disabled={deleteLeadMutation.isPending}
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </Button>
-                          </div>
+                  <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+                    <TabsList className="bg-secondary/50 p-1 rounded-2xl h-11 mb-4">
+                      <TabsTrigger value="all" className="rounded-xl px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                        All ({leads.length})
+                      </TabsTrigger>
+                      <TabsTrigger value="consultation" className="rounded-xl px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                        Consultations ({leads.filter(l => l.type === 'Consultation').length})
+                      </TabsTrigger>
+                      <TabsTrigger value="waitlist" className="rounded-xl px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                        Waitlist ({leads.filter(l => l.type === 'Waitlist').length})
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <div className="grid gap-4 mt-2">
+                      {isLoadingLeads ? (
+                        <div className="p-12 text-center text-muted-foreground">Loading leads...</div>
+                      ) : leads.filter(l => activeTab === 'all' ? true : l.type.toLowerCase() === activeTab).length === 0 ? (
+                        <div className="p-12 text-center text-muted-foreground border-2 border-dashed border-border/50 rounded-3xl">
+                          No {activeTab === 'all' ? '' : activeTab} leads received yet.
                         </div>
-                      ))
-                    )}
-                  </div>
+                      ) : (
+                        leads
+                          .filter(l => activeTab === 'all' ? true : l.type.toLowerCase() === activeTab)
+                          .map((lead) => (
+                            <div
+                              key={lead.id}
+                              className="flex items-center justify-between p-6 rounded-3xl bg-secondary/30 border border-border/50 hover:border-accent/30 transition-all group cursor-pointer"
+                              onClick={() => {
+                                setSelectedLead(lead);
+                                setIsLeadDetailOpen(true);
+                              }}
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent font-bold">
+                                  {lead.name.charAt(0)}
+                                </div>
+                                <div>
+                                  <p className="font-bold">{lead.name}</p>
+                                  <p className="text-xs text-muted-foreground">{lead.type} • {lead.zip}</p>
+                                </div>
+                              </div>
+                              <div className="text-right flex items-center gap-6">
+                                <div>
+                                  <p className={`text-xs font-bold ${lead.status === 'Urgent' ? 'text-red-500' : 'text-accent'}`}>{lead.status}</p>
+                                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                                    {new Date(lead.createdAt).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="rounded-xl opacity-0 group-hover:opacity-100 text-destructive hover:bg-destructive/10"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteLeadMutation.mutate(lead.id);
+                                  }}
+                                  disabled={deleteLeadMutation.isPending}
+                                >
+                                  <Trash2 className="h-5 w-5" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  </Tabs>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8">
@@ -1598,6 +1636,27 @@ export default function HomePage() {
                       <p className="font-bold">{selectedLead.status}</p>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <div className="mb-8 p-6 rounded-3xl bg-accent/5 border border-accent/10">
+                <p className="text-xs font-bold uppercase tracking-widest text-accent mb-4">Organize & Move Lead</p>
+                <div className="flex flex-wrap gap-2">
+                  {['New', 'Consultation', 'Waitlist', 'Archived', 'Spam'].map((status) => (
+                    <Button
+                      key={status}
+                      variant={selectedLead.status === status ? "default" : "outline"}
+                      size="sm"
+                      className="rounded-xl font-bold h-9"
+                      onClick={() => updateLeadStatusMutation.mutate({ id: selectedLead.id, status })}
+                      disabled={updateLeadStatusMutation.isPending}
+                    >
+                      {updateLeadStatusMutation.isPending && updateLeadStatusMutation.variables?.status === status ? (
+                        <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                      ) : null}
+                      {status}
+                    </Button>
+                  ))}
                 </div>
               </div>
 
