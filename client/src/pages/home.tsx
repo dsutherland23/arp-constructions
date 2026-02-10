@@ -168,7 +168,6 @@ export default function HomePage() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminAuth, setAdminAuth] = useState({ user: "", pass: "" });
-  const [adminAvailable, setAdminAvailable] = useState(true);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isLeadDetailOpen, setIsLeadDetailOpen] = useState(false);
@@ -313,34 +312,6 @@ export default function HomePage() {
 
   const [isFAQOpen, setIsFAQOpen] = useState(false);
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
-  const [chatStep, setChatStep] = useState(0);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatLead, setChatLead] = useState({ name: "", phone: "", email: "", desc: "" });
-
-  const handleLiveChat = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (window.navigator.vibrate) window.navigator.vibrate(10);
-
-    const newLead = {
-      name: chatLead.name,
-      type: "Live Chat",
-      status: adminAvailable ? "Connected" : "Missed",
-      date: "Just now",
-      zip: "---",
-      phone: chatLead.phone,
-      email: chatLead.email,
-      desc: chatLead.desc,
-      id: Date.now()
-    };
-    // Lead will be saved by server (implementing chat lead saving would be a next step)
-    setChatStep(1);
-    if (!adminAvailable) {
-      toast({
-        title: "Admin Unavailable",
-        description: "We'll get back to you shortly via the provided contact info.",
-      });
-    }
-  };
 
   const faqs = [
     { q: "What areas do you serve?", a: "We primarily serve New York and surrounding areas.", action: "Contact", link: "#contact" },
@@ -481,7 +452,7 @@ export default function HomePage() {
 
   return (
     <div className="noise-bg min-h-screen">
-      {/* FAQ Assistant Button */}
+      {/* Digital Q&A Button */}
       <div className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-[150] landscape:bottom-6">
         <Button
           onClick={() => setIsFAQOpen(true)}
@@ -523,9 +494,9 @@ export default function HomePage() {
                 <div className="h-10 w-10 rounded-2xl bg-accent/20 flex items-center justify-center">
                   <Sparkles className="h-5 w-5 text-accent" />
                 </div>
-                <DialogTitle className="text-2xl font-bold">ARP Assistant</DialogTitle>
+                <DialogTitle className="text-2xl font-bold uppercase tracking-tight">Digital Q&A</DialogTitle>
               </div>
-              <p className="text-muted-foreground">How can I help you today? Select a common question or reach out directly.</p>
+              <p className="text-muted-foreground">Select a common question below for immediate architectural and project insights.</p>
             </DialogHeader>
 
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
@@ -565,97 +536,15 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-border/50 space-y-3">
-              <p className="text-xs text-muted-foreground text-center mb-1 italic">Ready to transform your space?</p>
-
-              <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
-                <DialogTrigger asChild>
-                  <Button className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20 flex items-center justify-center gap-2 text-white">
-                    <Mail className="h-5 w-5" />
-                    Start Live Chat
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none glass-card p-0 z-[130]">
-                  <div className="p-8">
-                    <DialogHeader className="mb-6">
-                      <DialogTitle className="text-2xl font-bold">Live Chat</DialogTitle>
-                    </DialogHeader>
-
-                    {chatStep === 0 ? (
-                      <form onSubmit={handleLiveChat} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label>Name</Label>
-                          <Input
-                            value={chatLead.name}
-                            onChange={(e) => setChatLead(p => ({ ...p, name: e.target.value }))}
-                            required className="rounded-xl bg-background/50"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Telephone</Label>
-                          <Input
-                            type="tel"
-                            value={chatLead.phone}
-                            onChange={(e) => setChatLead(p => ({ ...p, phone: e.target.value }))}
-                            required className="rounded-xl bg-background/50"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Email</Label>
-                          <Input
-                            type="email"
-                            value={chatLead.email}
-                            onChange={(e) => setChatLead(p => ({ ...p, email: e.target.value }))}
-                            required className="rounded-xl bg-background/50"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Short Synopsis</Label>
-                          <Textarea
-                            value={chatLead.desc}
-                            onChange={(e) => setChatLead(p => ({ ...p, desc: e.target.value }))}
-                            required className="rounded-xl min-h-[80px] bg-background/50"
-                          />
-                        </div>
-                        <Button type="submit" className="w-full h-12 rounded-xl bg-accent font-bold text-white shadow-lg shadow-accent/20">
-                          Check Availability
-                        </Button>
-                      </form>
-                    ) : (
-                      <div className="py-8 text-center space-y-4">
-                        <div className={`h-16 w-16 rounded-full flex items-center justify-center mx-auto ${adminAvailable ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"}`}>
-                          {adminAvailable ? <CheckCircle2 className="h-8 w-8" /> : <X className="h-8 w-8" />}
-                        </div>
-                        <h3 className="text-xl font-bold">
-                          {adminAvailable ? "Admin Connected" : "Admin Unavailable"}
-                        </h3>
-                        <p className="text-muted-foreground text-sm">
-                          {adminAvailable
-                            ? "Connecting you to a live representative now..."
-                            : "We're currently assisting other clients. We will get in contact with you shortly!"}
-                        </p>
-                        <Button
-                          onClick={() => {
-                            setChatStep(0);
-                            setIsChatOpen(false);
-                          }}
-                          variant="outline"
-                          className="rounded-xl w-full h-12"
-                        >
-                          Close
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </DialogContent>
-              </Dialog>
+            <div className="mt-8 pt-6 border-t border-border/50">
+              <p className="text-xs text-muted-foreground text-center mb-1 italic uppercase tracking-[0.2em] opacity-50">Setting the standard in precision</p>
 
               <Button
                 onClick={() => {
                   setIsFAQOpen(false);
                   window.location.href = "#contact";
                 }}
-                className="w-full h-14 rounded-2xl bg-secondary hover:bg-secondary/80 font-bold border border-border/50"
+                className="w-full h-14 rounded-2xl bg-accent hover:bg-primary font-bold shadow-lg shadow-accent/20 text-white mt-4"
               >
                 Initiate Consultation
               </Button>
@@ -665,7 +554,8 @@ export default function HomePage() {
       </Dialog>
 
       {/* Navigation */}
-      <nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"} landscape:py-2`}>
+      < nav className={`fixed top-0 z-[100] w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-4 md:py-8"} landscape:py-2`
+      }>
         <div className="container mx-auto px-4 md:px-6">
           <div className={`flex items-center justify-between transition-all duration-500 ${isScrolled ? "glass-card shadow-lg rounded-full px-4 md:px-6 py-2 md:py-3" : "bg-transparent px-2 py-2"} landscape:glass-card landscape:rounded-full landscape:px-4 landscape:py-1`}>
             <div className="flex items-center cursor-pointer select-none" onClick={handleLogoClick}>
@@ -724,10 +614,10 @@ export default function HomePage() {
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
+      </nav >
 
       {/* Hero Section */}
-      <section className="relative h-[90vh] md:h-screen overflow-hidden">
+      < section className="relative h-[90vh] md:h-screen overflow-hidden" >
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSlide}
@@ -779,10 +669,10 @@ export default function HomePage() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section >
 
       {/* Bento Grid Services */}
-      <section id="services" className="py-20 md:py-32">
+      < section id="services" className="py-20 md:py-32" >
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 md:mb-20">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">Our Capabilities</h2>
@@ -851,10 +741,10 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Marquee/Scrolling Projects */}
-      <section id="projects" className="bg-primary py-20 md:py-32 text-primary-foreground">
+      < section id="projects" className="bg-primary py-20 md:py-32 text-primary-foreground" >
         <div className="container mx-auto mb-12 md:mb-20 px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">Visual Proof</h2>
@@ -937,10 +827,10 @@ export default function HomePage() {
             ))}
           </motion.div>
         </div>
-      </section>
+      </section >
 
       {/* Process Section */}
-      <section id="process" className="py-20 md:py-32 bg-secondary/30">
+      < section id="process" className="py-20 md:py-32 bg-secondary/30" >
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 md:mb-20 text-center">
             <Badge variant="outline" className="mb-4 rounded-full border-accent/20 bg-accent/5 px-4 py-1 text-accent">
@@ -964,10 +854,10 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Reviews Section */}
-      <section id="reviews" className="py-20 md:py-32">
+      < section id="reviews" className="py-20 md:py-32" >
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-20">
             <div>
@@ -1031,10 +921,10 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Modern Contact Strategy */}
-      <section id="contact" className="py-20 md:py-32">
+      < section id="contact" className="py-20 md:py-32" >
         <div className="container mx-auto px-4 md:px-6">
           <div className="rounded-[2rem] md:rounded-[3rem] bg-card p-6 md:p-20 shadow-xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 -skew-x-12 translate-x-1/4" />
@@ -1305,10 +1195,10 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Footer */}
-      <footer className="border-t py-12 md:py-20 mb-20 md:mb-0">
+      < footer className="border-t py-12 md:py-20 mb-20 md:mb-0" >
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-between gap-10 lg:flex-row lg:items-start">
             <div className="flex flex-col items-center">
@@ -1418,10 +1308,10 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </footer>
+      </footer >
 
       {/* Admin Dashboard Dialog */}
-      <Dialog open={isAdminOpen} onOpenChange={setIsAdminOpen}>
+      < Dialog open={isAdminOpen} onOpenChange={setIsAdminOpen} >
         <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] border-none glass-card p-0 z-[200]">
           {!isLoggedIn ? (
             <div className="p-6 md:p-12">
@@ -1459,22 +1349,11 @@ export default function HomePage() {
                   <h2 className="text-4xl font-bold tracking-tighter">Command Center</h2>
                   <p className="text-muted-foreground">Managing ARP Excellence.</p>
                 </div>
-                <div className="flex items-center justify-between sm:justify-start gap-4 bg-secondary/50 p-2 rounded-2xl border border-border/50 w-full md:w-auto">
-                  <span className="text-sm font-bold ml-2">Presence:</span>
-                  <div className="flex gap-1 bg-background/50 p-1 rounded-xl">
-                    <button
-                      onClick={() => setAdminAvailable(true)}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${adminAvailable ? "bg-green-500 text-white shadow-lg" : "text-muted-foreground hover:text-primary"}`}
-                    >
-                      Available
-                    </button>
-                    <button
-                      onClick={() => setAdminAvailable(false)}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${!adminAvailable ? "bg-orange-500 text-white shadow-lg" : "text-muted-foreground hover:text-primary"}`}
-                    >
-                      Away
-                    </button>
-                  </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="h-8 rounded-full border-accent/20 text-accent font-bold px-4">System Online</Badge>
+                  <Button onClick={handleLogout} variant="ghost" size="sm" className="h-8 rounded-full text-muted-foreground hover:text-destructive">
+                    Logout
+                  </Button>
                 </div>
               </div>
 
@@ -1626,10 +1505,10 @@ export default function HomePage() {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog >
 
       {/* Lead Detail Dialog */}
-      <Dialog open={isLeadDetailOpen} onOpenChange={setIsLeadDetailOpen}>
+      < Dialog open={isLeadDetailOpen} onOpenChange={setIsLeadDetailOpen} >
         <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-none glass-card p-0 z-[250] !p-0">
           {selectedLead && (
             <div className="p-5 md:p-12 h-full overflow-y-auto custom-scrollbar">
@@ -1743,7 +1622,7 @@ export default function HomePage() {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog >
       <AnimatePresence>
         {zoomedImage && (
           <motion.div
@@ -1770,6 +1649,6 @@ export default function HomePage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </div >
   );
 }
