@@ -926,7 +926,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <p className="text-xs md:text-sm text-muted-foreground">Digital Inquiry</p>
-                      <p className="text-lg md:text-xl font-bold">info@arpconstructionpro.org</p>
+                      <a href="mailto:info@arpconstructionpro.org" className="text-lg md:text-xl font-bold hover:text-accent transition-colors">info@arpconstructionpro.org</a>
                     </div>
                   </div>
                 </div>
