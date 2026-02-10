@@ -30,10 +30,13 @@ export async function registerRoutes(
         user: smtpUser,
         pass: process.env.SMTP_PASS,
       },
-      // Adding some timeouts to prevent long hangs
-      connectionTimeout: 10000,
-      greetingTimeout: 5000,
-      socketTimeout: 15000,
+      // Resilience settings for cloud deployments (Render/Heroku/etc)
+      tls: {
+        rejectUnauthorized: false
+      },
+      connectionTimeout: 20000,
+      greetingTimeout: 10000,
+      socketTimeout: 30000,
     });
 
     // Verify connection configuration on startup
