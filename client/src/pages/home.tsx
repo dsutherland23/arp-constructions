@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
-import { 
-  ArrowUpRight, 
-  ChevronRight, 
-  Droplets, 
-  Hammer, 
-  Building2, 
-  ShieldCheck, 
-  Timer, 
+import {
+  ArrowUpRight,
+  ChevronRight,
+  Droplets,
+  Hammer,
+  Building2,
+  ShieldCheck,
+  Timer,
   Quote,
   MoveRight,
   Menu,
@@ -32,12 +32,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
@@ -226,7 +226,7 @@ export default function HomePage() {
   const handleLiveChat = (e: React.FormEvent) => {
     e.preventDefault();
     if (window.navigator.vibrate) window.navigator.vibrate(10);
-    
+
     const newLead = {
       name: chatLead.name,
       type: "Live Chat",
@@ -239,7 +239,7 @@ export default function HomePage() {
       id: Date.now()
     };
     setSubmissions(prev => [newLead, ...prev]);
-    
+
     setChatStep(1);
     if (!adminAvailable) {
       toast({
@@ -304,7 +304,7 @@ export default function HomePage() {
         id: Date.now()
       };
       setSubmissions(prev => [newLead, ...prev]);
-      
+
       toast({
         title: "Strategy Session Booked",
         description: "We've received your information and will reach out shortly.",
@@ -356,7 +356,7 @@ export default function HomePage() {
     <div className="noise-bg min-h-screen">
       {/* FAQ Assistant Button */}
       <div className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-[150] landscape:bottom-6">
-        <Button 
+        <Button
           onClick={() => setIsFAQOpen(true)}
           className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-accent shadow-2xl hover:scale-110 transition-transform group relative overflow-hidden border border-white/20"
         >
@@ -369,8 +369,8 @@ export default function HomePage() {
       <div className="fixed bottom-0 left-0 z-[120] w-full md:hidden transition-transform duration-300 landscape:hidden" style={{ transform: isMobileMenuOpen ? 'translateY(100%)' : 'translateY(0)' }}>
         <div className="mx-4 mb-4 glass-card shadow-[0_-10px_40px_rgba(0,0,0,0.3)] rounded-[2.5rem] flex items-center justify-around py-4 px-2 border border-white/20 backdrop-blur-2xl ring-1 ring-white/10">
           {mobileNav.map((item) => (
-            <button 
-              key={item.label} 
+            <button
+              key={item.label}
               onClick={() => {
                 if (window.navigator.vibrate) window.navigator.vibrate(10);
                 window.location.href = item.href;
@@ -400,7 +400,7 @@ export default function HomePage() {
               </div>
               <p className="text-muted-foreground">How can I help you today? Select a common question or reach out directly.</p>
             </DialogHeader>
-            
+
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {faqs.map((faq, i) => (
                 <div key={i} className="space-y-2">
@@ -421,9 +421,9 @@ export default function HomePage() {
                       >
                         <div className="p-4 pt-2 space-y-4">
                           <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
+                          <Button
+                            variant="outline"
+                            size="sm"
                             className="rounded-full border-accent/20 text-accent hover:bg-accent/5"
                             asChild
                             onClick={() => setIsFAQOpen(false)}
@@ -440,7 +440,7 @@ export default function HomePage() {
 
             <div className="mt-8 pt-6 border-t border-border/50 space-y-3">
               <p className="text-xs text-muted-foreground text-center mb-1 italic">Ready to transform your space?</p>
-              
+
               <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
                 <DialogTrigger asChild>
                   <Button className="w-full h-14 rounded-2xl bg-accent font-bold shadow-lg shadow-accent/20 flex items-center justify-center gap-2 text-white">
@@ -453,41 +453,41 @@ export default function HomePage() {
                     <DialogHeader className="mb-6">
                       <DialogTitle className="text-2xl font-bold">Live Chat</DialogTitle>
                     </DialogHeader>
-                    
+
                     {chatStep === 0 ? (
                       <form onSubmit={handleLiveChat} className="space-y-4">
                         <div className="space-y-2">
                           <Label>Name</Label>
-                          <Input 
+                          <Input
                             value={chatLead.name}
                             onChange={(e) => setChatLead(p => ({ ...p, name: e.target.value }))}
-                            required className="rounded-xl bg-background/50" 
+                            required className="rounded-xl bg-background/50"
                           />
                         </div>
                         <div className="space-y-2">
                           <Label>Telephone</Label>
-                          <Input 
+                          <Input
                             type="tel"
                             value={chatLead.phone}
                             onChange={(e) => setChatLead(p => ({ ...p, phone: e.target.value }))}
-                            required className="rounded-xl bg-background/50" 
+                            required className="rounded-xl bg-background/50"
                           />
                         </div>
                         <div className="space-y-2">
                           <Label>Email</Label>
-                          <Input 
+                          <Input
                             type="email"
                             value={chatLead.email}
                             onChange={(e) => setChatLead(p => ({ ...p, email: e.target.value }))}
-                            required className="rounded-xl bg-background/50" 
+                            required className="rounded-xl bg-background/50"
                           />
                         </div>
                         <div className="space-y-2">
                           <Label>Short Synopsis</Label>
-                          <Textarea 
+                          <Textarea
                             value={chatLead.desc}
                             onChange={(e) => setChatLead(p => ({ ...p, desc: e.target.value }))}
-                            required className="rounded-xl min-h-[80px] bg-background/50" 
+                            required className="rounded-xl min-h-[80px] bg-background/50"
                           />
                         </div>
                         <Button type="submit" className="w-full h-12 rounded-xl bg-accent font-bold text-white shadow-lg shadow-accent/20">
@@ -503,16 +503,16 @@ export default function HomePage() {
                           {adminAvailable ? "Admin Connected" : "Admin Unavailable"}
                         </h3>
                         <p className="text-muted-foreground text-sm">
-                          {adminAvailable 
-                            ? "Connecting you to a live representative now..." 
+                          {adminAvailable
+                            ? "Connecting you to a live representative now..."
                             : "We're currently assisting other clients. We will get in contact with you shortly!"}
                         </p>
-                        <Button 
+                        <Button
                           onClick={() => {
                             setChatStep(0);
                             setIsChatOpen(false);
-                          }} 
-                          variant="outline" 
+                          }}
+                          variant="outline"
                           className="rounded-xl w-full h-12"
                         >
                           Close
@@ -523,7 +523,7 @@ export default function HomePage() {
                 </DialogContent>
               </Dialog>
 
-              <Button 
+              <Button
                 onClick={() => {
                   setIsFAQOpen(false);
                   window.location.href = "#contact";
@@ -544,22 +544,22 @@ export default function HomePage() {
             <div className="flex items-center cursor-pointer select-none" onClick={handleLogoClick}>
               <img src={logoImg} alt="Arp" className="h-14 md:h-20 w-auto transition-all duration-500 object-contain landscape:h-12" />
             </div>
-            
+
             <div className="hidden items-center gap-6 lg:flex ml-auto landscape:hidden">
               {navItems.map((item) => (
                 <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-semibold tracking-tight text-primary hover:text-accent transition-all duration-300">
                   {item}
                 </a>
               ))}
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 className="rounded-full bg-primary px-8 hover:bg-accent transition-all shadow-lg hover:shadow-accent/20"
                 asChild
               >
                 <a href="#contact">Book a Consult</a>
               </Button>
             </div>
-            
+
             {/* Mobile Nav Toggle */}
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -579,9 +579,9 @@ export default function HomePage() {
             >
               <div className="flex flex-col gap-4">
                 {navItems.map((item) => (
-                  <a 
-                    key={item} 
-                    href={`#${item.toLowerCase()}`} 
+                  <a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
                     className="text-lg font-medium p-2 border-b border-border/50"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -611,9 +611,9 @@ export default function HomePage() {
             className="absolute inset-0"
           >
             <div className="absolute inset-0 z-10 bg-gradient-to-r from-background via-background/40 to-transparent" />
-            <img 
-              src={heroImages[activeSlide]} 
-              className="h-full w-full object-cover grayscale-[0.2]" 
+            <img
+              src={heroImages[activeSlide]}
+              className="h-full w-full object-cover grayscale-[0.2]"
               alt="Hero"
             />
           </motion.div>
@@ -661,7 +661,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold tracking-tighter sm:text-6xl">Our Capabilities</h2>
             <div className="mt-4 h-1 w-24 bg-accent" />
           </div>
-          
+
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service, i) => (
               <Dialog key={i}>
@@ -689,7 +689,7 @@ export default function HomePage() {
                       <DialogTitle className="text-4xl font-bold tracking-tight text-gradient">Full Service Catalog</DialogTitle>
                       <p className="text-muted-foreground mt-2">Professional solutions for every corner of your home.</p>
                     </DialogHeader>
-                    
+
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                       {detailedServices.map((detailed, idx) => (
                         <div key={idx} className="space-y-4 p-6 rounded-3xl bg-secondary/30 border border-border/50">
@@ -708,7 +708,7 @@ export default function HomePage() {
                         </div>
                       ))}
                     </div>
-                    
+
                     <div className="mt-12 p-8 rounded-[2rem] bg-accent text-accent-foreground text-center pb-24 md:pb-8">
                       <h4 className="text-xl font-bold mb-2">Need something else?</h4>
                       <p className="opacity-90 mb-6">No job is too small for our expert team.</p>
@@ -743,13 +743,13 @@ export default function HomePage() {
                     <DialogTitle className="text-4xl font-bold tracking-tight text-gradient">Project Portfolio</DialogTitle>
                     <p className="text-muted-foreground mt-2">A detailed look at our latest transformations and craftsmanship.</p>
                   </DialogHeader>
-                  
+
                   <div className="grid gap-8 sm:grid-cols-2">
                     {projects.map((project, i) => (
                       <div key={i} className="group space-y-4">
                         <div className="aspect-video overflow-hidden rounded-3xl bg-secondary/30 relative">
-                          <img 
-                            src={project.image} 
+                          <img
+                            src={project.image}
                             alt={project.title}
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
@@ -782,16 +782,16 @@ export default function HomePage() {
         </div>
 
         <div className="flex overflow-hidden pb-10">
-          <motion.div 
+          <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             className="flex gap-4 md:gap-8 px-4"
           >
             {[...projects, ...projects].map((project, i) => (
               <div key={i} className="group relative h-[350px] md:h-[450px] w-[280px] md:w-[500px] shrink-0 overflow-hidden rounded-[2.5rem] bg-white/5">
-                <img 
-                  src={project.image} 
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                <img
+                  src={project.image}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   alt={project.title}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -904,7 +904,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="rounded-[2rem] md:rounded-[3rem] bg-card p-6 md:p-20 shadow-xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 -skew-x-12 translate-x-1/4" />
-            
+
             <div className="grid gap-12 lg:grid-cols-2 relative z-10">
               <div>
                 <h2 className="mb-6 md:mb-8 text-4xl font-bold tracking-tighter sm:text-7xl">
@@ -926,7 +926,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <p className="text-xs md:text-sm text-muted-foreground">Digital Inquiry</p>
-                      <p className="text-lg md:text-xl font-bold">adrian.pecco@gmail.com</p>
+                      <p className="text-lg md:text-xl font-bold">info@arpconstructionpro.org</p>
                     </div>
                   </div>
                 </div>
@@ -934,7 +934,7 @@ export default function HomePage() {
 
               <div className="glass-card rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-12 relative">
                 {formStep > 0 && (
-                  <button 
+                  <button
                     onClick={handleBack}
                     className="absolute top-4 left-4 p-2 rounded-full hover:bg-secondary transition-colors text-muted-foreground hover:text-accent flex items-center gap-1 text-xs font-bold"
                   >
@@ -947,13 +947,13 @@ export default function HomePage() {
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid gap-4">
                       <div className="grid gap-2">
                         <Label htmlFor="zip">Enter Zip Code</Label>
-                        <Input 
-                          id="zip" 
-                          placeholder="e.g. 10001" 
+                        <Input
+                          id="zip"
+                          placeholder="e.g. 10001"
                           value={formData.zip}
                           onChange={handleInputChange}
-                          required 
-                          className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50" 
+                          required
+                          className="h-12 md:h-14 rounded-xl md:rounded-2xl bg-background/50"
                         />
                       </div>
                       <Button type="submit" size="lg" className="h-14 md:h-16 rounded-xl md:rounded-2xl bg-accent font-bold hover:bg-primary">
@@ -994,41 +994,41 @@ export default function HomePage() {
                       <div className="grid gap-4 text-left">
                         <div className="grid gap-2">
                           <Label htmlFor="waitlist-name">Full Name</Label>
-                          <Input 
-                            id="name" 
-                            placeholder="John Doe" 
-                            value={formData.name} 
-                            onChange={handleInputChange} 
-                            required 
-                            className="h-12 rounded-xl bg-background/50" 
+                          <Input
+                            id="name"
+                            placeholder="John Doe"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            required
+                            className="h-12 rounded-xl bg-background/50"
                           />
                         </div>
                         <div className="grid gap-2">
                           <Label htmlFor="waitlist-email">Email</Label>
-                          <Input 
-                            id="email" 
-                            type="email" 
-                            placeholder="john@example.com" 
-                            value={formData.email} 
-                            onChange={handleInputChange} 
-                            required 
-                            className="h-12 rounded-xl bg-background/50" 
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="john@example.com"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                            className="h-12 rounded-xl bg-background/50"
                           />
                         </div>
                         <div className="grid gap-2">
                           <Label htmlFor="waitlist-phone">Phone</Label>
-                          <Input 
-                            id="phone" 
-                            type="tel" 
-                            placeholder="Phone Number" 
-                            value={formData.phone} 
-                            onChange={handleInputChange} 
-                            required 
-                            className="h-12 rounded-xl bg-background/50" 
+                          <Input
+                            id="phone"
+                            type="tel"
+                            placeholder="Phone Number"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            required
+                            className="h-12 rounded-xl bg-background/50"
                           />
                         </div>
                       </div>
-                      <Button 
+                      <Button
                         type="button"
                         onClick={() => {
                           if (formData.name && formData.email && formData.phone) {
@@ -1040,7 +1040,7 @@ export default function HomePage() {
                               variant: "destructive"
                             });
                           }
-                        }} 
+                        }}
                         className="h-14 rounded-xl bg-accent font-bold"
                       >
                         Join Waitlist
@@ -1104,7 +1104,7 @@ export default function HomePage() {
                 Setting the standard for architectural precision and modern living in 2026.
               </p>
             </div>
-            
+
             <div className="flex gap-16 md:gap-24">
               <div className="space-y-4">
                 <p className="font-bold text-xs uppercase tracking-widest text-accent">Studio</p>
@@ -1146,8 +1146,8 @@ export default function HomePage() {
                                 </DialogHeader>
                                 <div className="flex flex-col items-center gap-6">
                                   <div className="p-4 bg-white rounded-3xl shadow-xl">
-                                    <QRCodeSVG 
-                                      value={`BEGIN:VCARD\nVERSION:3.0\nFN:Adrian Pecco\nORG:ARP Construction\nTEL:7047129947\nEMAIL:adrian.pecco@gmail.com\nURL:https://arp.construction\nEND:VCARD`}
+                                    <QRCodeSVG
+                                      value={`BEGIN:VCARD\nVERSION:3.0\nFN:Adrian Pecco\nORG:ARP Construction\nTEL:7047129947\nEMAIL:info@arpconstructionpro.org\nURL:https://arp.construction\nEND:VCARD`}
                                       size={200}
                                       level="H"
                                       includeMargin={true}
@@ -1219,19 +1219,19 @@ export default function HomePage() {
               <form onSubmit={handleAdminLogin} className="space-y-6 max-w-sm mx-auto">
                 <div className="space-y-2">
                   <Label>Username</Label>
-                  <Input 
-                    value={adminAuth.user} 
+                  <Input
+                    value={adminAuth.user}
                     onChange={(e) => setAdminAuth(p => ({ ...p, user: e.target.value }))}
-                    className="h-12 rounded-xl bg-background/50" 
+                    className="h-12 rounded-xl bg-background/50"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Password</Label>
-                  <Input 
+                  <Input
                     type="password"
-                    value={adminAuth.pass} 
+                    value={adminAuth.pass}
                     onChange={(e) => setAdminAuth(p => ({ ...p, pass: e.target.value }))}
-                    className="h-12 rounded-xl bg-background/50" 
+                    className="h-12 rounded-xl bg-background/50"
                   />
                 </div>
                 <Button type="submit" className="w-full h-14 rounded-xl bg-accent font-bold text-white shadow-xl shadow-accent/20">
@@ -1249,13 +1249,13 @@ export default function HomePage() {
                 <div className="flex items-center gap-4 bg-secondary/50 p-2 rounded-2xl border border-border/50">
                   <span className="text-sm font-bold ml-2">Presence:</span>
                   <div className="flex gap-1 bg-background/50 p-1 rounded-xl">
-                    <button 
+                    <button
                       onClick={() => setAdminAvailable(true)}
                       className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${adminAvailable ? "bg-green-500 text-white shadow-lg" : "text-muted-foreground hover:text-primary"}`}
                     >
                       Available
                     </button>
-                    <button 
+                    <button
                       onClick={() => setAdminAvailable(false)}
                       className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${!adminAvailable ? "bg-orange-500 text-white shadow-lg" : "text-muted-foreground hover:text-primary"}`}
                     >
