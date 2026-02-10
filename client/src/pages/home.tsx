@@ -330,10 +330,11 @@ export default function HomePage() {
           }
         })
         .catch(err => {
-          console.error("Form submission error:", err);
+          console.error("Form submission error details:", err);
+          const errorMsg = err instanceof Error ? err.message : String(err);
           toast({
             title: "Network Error",
-            description: "Could not connect to the server. Please check your connection and try again.",
+            description: `Could not connect to the server (${errorMsg}). Please check your connection or try again later.`,
             variant: "destructive"
           });
         });
