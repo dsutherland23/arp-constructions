@@ -1229,45 +1229,60 @@ export default function HomePage() {
                           <div className="relative aspect-[1.75/1] w-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
                             <img src={cardFront} alt="Business Card Front" className="w-full h-full object-cover" />
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <Button asChild className="rounded-2xl h-14 bg-accent hover:bg-primary transition-all">
-                              <a href={cardFront} download="ARP_Construction_Card.jpg" className="flex items-center justify-center gap-2">
-                                <Download className="h-5 w-5" />
-                                Download
+
+                          <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left px-2">
+                            <p className="text-xl font-bold">Adrian Pecco</p>
+                            <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-1">
+                              <a href="tel:7047129947" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
+                                <Phone className="h-3.5 w-3.5" /> 704 712 9947
                               </a>
-                            </Button>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <button className="bg-white p-2 rounded-2xl shadow-inner flex items-center justify-center aspect-square h-14 w-full cursor-pointer hover:bg-secondary transition-colors">
-                                  <QrCode className="h-8 w-8 text-primary" />
-                                  <span className="text-[10px] font-bold ml-1 uppercase">Scan QR</span>
-                                </button>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-md rounded-3xl overflow-hidden border-none glass-card p-8">
-                                <DialogHeader className="mb-6">
-                                  <DialogTitle className="text-xl font-bold text-center">Scan to Save Contact</DialogTitle>
-                                </DialogHeader>
-                                <div className="flex flex-col items-center gap-6">
-                                  <div className="p-4 bg-white rounded-3xl shadow-xl">
-                                    <QRCodeSVG
-                                      value={`BEGIN:VCARD\nVERSION:3.0\nFN:Adrian Pecco\nORG:ARP Construction\nTEL:7047129947\nEMAIL:info@arpconstructionpro.org\nURL:https://arp.construction\nEND:VCARD`}
-                                      size={200}
-                                      level="H"
-                                      includeMargin={true}
-                                    />
-                                  </div>
-                                  <p className="text-sm text-center text-muted-foreground">
-                                    Open your phone camera to scan this code and instantly save ARP Construction to your contacts.
-                                  </p>
+                              <a href="mailto:info@arpconstructionpro.org" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
+                                <Mail className="h-3.5 w-3.5" /> info@arpconstructionpro.org
+                              </a>
+                              <a href="https://arpconstructionpro.org" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
+                                <ExternalLink className="h-3.5 w-3.5" /> arpconstructionpro.org
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <Button asChild className="rounded-2xl h-14 bg-accent hover:bg-primary transition-all">
+                            <a href={cardFront} download="ARP_Construction_Card.jpg" className="flex items-center justify-center gap-2">
+                              <Download className="h-5 w-5" />
+                              Download
+                            </a>
+                          </Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button className="bg-white p-2 rounded-2xl shadow-inner flex items-center justify-center aspect-square h-14 w-full cursor-pointer hover:bg-secondary transition-colors">
+                                <QrCode className="h-8 w-8 text-primary" />
+                                <span className="text-[10px] font-bold ml-1 uppercase">Scan QR</span>
+                              </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-md rounded-3xl overflow-hidden border-none glass-card p-8">
+                              <DialogHeader className="mb-6">
+                                <DialogTitle className="text-xl font-bold text-center">Scan to Save Contact</DialogTitle>
+                              </DialogHeader>
+                              <div className="flex flex-col items-center gap-6">
+                                <div className="p-4 bg-white rounded-3xl shadow-xl">
+                                  <QRCodeSVG
+                                    value={`BEGIN:VCARD\nVERSION:3.0\nFN:Adrian Pecco\nORG:ARP Construction\nTEL:7047129947\nEMAIL:info@arpconstructionpro.org\nURL:https://arpconstructionpro.org\nNOTE:Home Development | Plumbing\nEND:VCARD`}
+                                    size={200}
+                                    level="H"
+                                    includeMargin={true}
+                                  />
                                 </div>
-                              </DialogContent>
-                            </Dialog>
-                          </div>
-                          <div className="p-4 rounded-2xl bg-secondary/50 border border-border/50">
-                            <p className="text-sm text-center text-muted-foreground">
-                              Scan the QR code on the card to save our contact info directly to your phone.
-                            </p>
-                          </div>
+                                <p className="text-sm text-center text-muted-foreground">
+                                  Open your phone camera to scan this code and instantly save ARP Construction to your contacts.
+                                </p>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-secondary/50 border border-border/50">
+                          <p className="text-sm text-center text-muted-foreground">
+                            Scan the QR code on the card to save our contact info directly to your phone.
+                          </p>
                         </div>
                       </div>
                     </DialogContent>
