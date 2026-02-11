@@ -313,6 +313,28 @@ export default function HomePage() {
   const [isFAQOpen, setIsFAQOpen] = useState(false);
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
 
+  const vCardData = `BEGIN:VCARD
+VERSION:3.0
+FN:Adrian Pecco
+ORG:ARP Construction
+TEL:7047129947
+EMAIL:info@arpconstructionpro.org
+URL:https://arpconstructionpro.org
+NOTE:Home Development | Plumbing
+END:VCARD`;
+
+  const downloadVCard = () => {
+    const blob = new Blob([vCardData], { type: "text/vcard" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "Adrian_Pecco_ARP.vcf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
   const faqs = [
     { q: "What areas do you serve?", a: "We primarily serve New York and surrounding areas.", action: "Contact", link: "#contact" },
     { q: "How do I get a quote?", a: "You can initiate a consultation through our contact form or by calling us directly.", action: "Get Started", link: "#contact" },
@@ -1246,11 +1268,9 @@ export default function HomePage() {
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                          <Button asChild className="rounded-2xl h-14 bg-accent hover:bg-primary transition-all">
-                            <a href={cardFront} download="ARP_Construction_Card.jpg" className="flex items-center justify-center gap-2">
-                              <Download className="h-5 w-5" />
-                              Download
-                            </a>
+                          <Button onClick={downloadVCard} className="rounded-2xl h-14 bg-accent hover:bg-primary transition-all flex items-center justify-center gap-2 cursor-pointer w-full text-white font-bold shadow-lg shadow-accent/20">
+                            <Download className="h-5 w-5" />
+                            Save to Phone
                           </Button>
                           <Dialog>
                             <DialogTrigger asChild>
@@ -1266,7 +1286,7 @@ export default function HomePage() {
                               <div className="flex flex-col items-center gap-6">
                                 <div className="p-4 bg-white rounded-3xl shadow-xl">
                                   <QRCodeSVG
-                                    value={`BEGIN:VCARD\nVERSION:3.0\nFN:Adrian Pecco\nORG:ARP Construction\nTEL:7047129947\nEMAIL:info@arpconstructionpro.org\nURL:https://arpconstructionpro.org\nNOTE:Home Development | Plumbing\nEND:VCARD`}
+                                    value={vCardData}
                                     size={200}
                                     level="H"
                                     includeMargin={true}
