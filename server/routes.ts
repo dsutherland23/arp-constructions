@@ -40,13 +40,13 @@ export async function registerRoutes(
     });
 
     // Verify connection configuration on startup
-    transporter.verify((error: Error | null, success: boolean) => {
-      if (error) {
-        console.error("[SMTP] Connection verification failed:", error);
-      } else {
-        console.log("[SMTP] Connection verified successfully. Server is ready to take messages.");
-      }
-    });
+    // transporter.verify((error: Error | null, success: boolean) => {
+    //   if (error) {
+    //     console.error("[SMTP] Connection verification failed:", error);
+    //   } else {
+    //     console.log("[SMTP] Connection verified successfully. Server is ready to take messages.");
+    //   }
+    // });
   } catch (err) {
     console.error("[SMTP] Failed to create transporter:", err);
   }
