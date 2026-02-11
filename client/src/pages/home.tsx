@@ -68,8 +68,7 @@ import renoImg from "@/assets/images/project-reno-1.png";
 import plumbingImg from "@/assets/images/project-plumbing-1.png";
 import bathroomImg from "@/assets/images/project-bathroom.png";
 import kitchenImg from "@/assets/images/project-kitchen.png";
-import cardFront from "/assets/business-card-front.jpg";
-import cardBack from "/assets/business-card-back.jpg";
+import cardFront from "/assets/business-card-new.jpg";
 
 const projects = [
   {
