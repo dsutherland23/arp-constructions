@@ -312,6 +312,7 @@ export default function HomePage() {
 
   const [isFAQOpen, setIsFAQOpen] = useState(false);
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
+  const [isQRView, setIsQRView] = useState(false);
 
   const vCardData = `BEGIN:VCARD
 VERSION:3.0
@@ -1248,42 +1249,41 @@ END:VCARD`;
                           <DialogTitle className="text-2xl font-bold tracking-tight">Connect with ARP</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-6">
-                          <div className="relative aspect-[1.75/1] w-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
-                            <img src={cardFront} alt="Business Card Front" className="w-full h-full object-cover" />
-                          </div>
-
-                          <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left px-2">
-                            <p className="text-xl font-bold">Adrian Pecco</p>
-                            <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-1">
-                              <a href="tel:7047129947" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
-                                <Phone className="h-3.5 w-3.5" /> 704 712 9947
-                              </a>
-                              <a href="mailto:info@arpconstructionpro.org" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
-                                <Mail className="h-3.5 w-3.5" /> info@arpconstructionpro.org
-                              </a>
-                              <a href="https://arpconstructionpro.org" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
-                                <ExternalLink className="h-3.5 w-3.5" /> arpconstructionpro.org
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <Button onClick={downloadVCard} className="rounded-2xl h-14 bg-accent hover:bg-primary transition-all flex items-center justify-center gap-2 cursor-pointer w-full text-white font-bold shadow-lg shadow-accent/20">
-                            <Download className="h-5 w-5" />
-                            Save to Phone
-                          </Button>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <button className="bg-white p-2 rounded-2xl shadow-inner flex items-center justify-center aspect-square h-14 w-full cursor-pointer hover:bg-secondary transition-colors">
-                                <QrCode className="h-8 w-8 text-primary" />
-                                <span className="text-[10px] font-bold ml-1 uppercase">Scan QR</span>
-                              </button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-md rounded-3xl overflow-hidden border-none glass-card p-8">
-                              <DialogHeader className="mb-6">
-                                <DialogTitle className="text-xl font-bold text-center">Scan to Save Contact</DialogTitle>
-                              </DialogHeader>
-                              <div className="flex flex-col items-center gap-6">
+                          <AnimatePresence mode="wait">
+                            {!isQRView ? (
+                              <motion.div
+                                key="card"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                className="space-y-6"
+                              >
+                                <div className="relative aspect-[1.75/1] w-full rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                                  <img src={cardFront} alt="Business Card Front" className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left px-2">
+                                  <p className="text-xl font-bold">Adrian Pecco</p>
+                                  <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-1">
+                                    <a href="tel:7047129947" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
+                                      <Phone className="h-3.5 w-3.5" /> 704 712 9947
+                                    </a>
+                                    <a href="mailto:info@arpconstructionpro.org" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
+                                      <Mail className="h-3.5 w-3.5" /> info@arpconstructionpro.org
+                                    </a>
+                                    <a href="https://arpconstructionpro.org" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors">
+                                      <ExternalLink className="h-3.5 w-3.5" /> arpconstructionpro.org
+                                    </a>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="qr"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="flex flex-col items-center gap-6 py-4"
+                              >
                                 <div className="p-4 bg-white rounded-3xl shadow-xl">
                                   <QRCodeSVG
                                     value={vCardData}
@@ -1292,17 +1292,34 @@ END:VCARD`;
                                     includeMargin={true}
                                   />
                                 </div>
-                                <p className="text-sm text-center text-muted-foreground">
-                                  Open your phone camera to scan this code and instantly save ARP Construction to your contacts.
+                                <p className="text-sm text-center text-muted-foreground max-w-[200px]">
+                                  Scan to instantly save contact info.
                                 </p>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
-                        <div className="p-4 rounded-2xl bg-secondary/50 border border-border/50">
-                          <p className="text-sm text-center text-muted-foreground">
-                            Scan the QR code on the card to save our contact info directly to your phone.
-                          </p>
+                        <div className="grid grid-cols-2 gap-4 mt-6">
+                          <Button onClick={downloadVCard} className="rounded-2xl h-14 bg-accent hover:bg-primary transition-all flex items-center justify-center gap-2 cursor-pointer w-full text-white font-bold shadow-lg shadow-accent/20">
+                            <Download className="h-5 w-5" />
+                            Save to Phone
+                          </Button>
+                          <button
+                            onClick={() => setIsQRView(!isQRView)}
+                            className="bg-white p-2 rounded-2xl shadow-inner flex flex-col items-center justify-center aspect-[auto] h-14 w-full cursor-pointer hover:bg-secondary transition-colors"
+                          >
+                            {isQRView ? (
+                              <div className="flex items-center gap-2">
+                                <Layout className="h-5 w-5 text-primary" />
+                                <span className="text-xs font-bold uppercase">View Card</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <QrCode className="h-5 w-5 text-primary" />
+                                <span className="text-xs font-bold uppercase">Scan QR</span>
+                              </div>
+                            )}
+                          </button>
                         </div>
                       </div>
                     </DialogContent>
